@@ -16,13 +16,13 @@ function AddRecipes() {
           </label>
 
           <label className="flex justify-between">
-            <span>imageUrl</span>
+            <span>image</span>
             <input
-              type="text"
-              name="imageUrl"
-              id="imageUrl"
-              className="border-2 rounded w-40"
+              className="w-40 text-xs"
               required
+              type="file"
+              name="image"
+              accept=".png, .jpg, .jpeg, .gif"
             />
           </label>
 
@@ -91,7 +91,7 @@ function AddRecipes() {
           </div>
         </div>
         <span className="block">
-          <button className="bg-blue-100 text-xs rounded h-7 w-20 text-gray-700">
+          <button className="bg-blue-300 text-xs rounded h-7 w-20 text-gray-700">
             Add Recipe
           </button>
         </span>

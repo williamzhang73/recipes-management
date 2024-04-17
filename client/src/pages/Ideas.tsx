@@ -3,7 +3,7 @@ import RecipeCard from '../components/RecipeCard';
 function Ideas() {
   return (
     <>
-      <RecipeCard />
+      <RecipeCard details={false} />
     </>
   );
 }

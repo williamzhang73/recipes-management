@@ -1,25 +1,53 @@
-import { Link } from 'react-router-dom';
+/* import { useState } from 'react'; */
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 function SignInForm() {
+  const navigate = useNavigate();
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    try {
+      const formData = new FormData(e.currentTarget);
+      const formObject = Object.fromEntries(formData);
+      const req = {
+        method: 'post',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(formObject),
+      };
+      const response = await fetch('/api/auth/sign-in', req);
+      if (!response) throw new Error('Network response not ok.');
+      alert('login successfully');
+      navigate('/myrecipes');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="w-4/5 pt-8 flex justify-center">
-      <form className=" flex flex-col justify-center border-2 items-center bg-white  h-3/5 w-4/5 rounded-lg gap-y-3">
+      <form
+        className=" flex flex-col justify-center border-2 items-center bg-white  h-3/5 w-4/5 rounded-lg gap-y-3"
+        onSubmit={handleSubmit}>
         <span className="block font-bold">Sign In</span>
         <div>
           <input
             type="text"
             placeholder="Username"
             className="border-2 rounded cursor-pointer"
+            name="username"
           />
         </div>
         <div>
           <input
-            type="text"
+            type="password"
             placeholder="Password"
             className="border-2 rounded cursor-pointer"
+            name="password"
           />
         </div>
         <div className="flex flex-col items-center">
-          <button className="bg-blue-100 text-xs rounded h-7 w-12 text-gray-700">
+          <button className="bg-blue-300 text-xs rounded h-7 w-12 text-gray-700">
             Sign In
           </button>
           <span className="block text-xs">

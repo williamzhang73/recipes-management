@@ -4,9 +4,10 @@ import Header from './components/Header';
 import Ideas from './pages/Ideas';
 import MyRecipes from './pages/MyRecipes';
 import Favorites from './pages/Favorites';
-import AddRecipes from './pages/AddRecipes';
+import AddRecipes from './pages/RecipeForm';
 import SignInForm from './pages/SignInForm';
 import SignUpForm from './pages/SignUpForm';
+import Details from './pages/Details';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="addrecipe" element={<AddRecipes />}></Route>
         <Route path="sign-in" element={<SignInForm />}></Route>
         <Route path="sign-up" element={<SignUpForm />}></Route>
+        <Route path="details" element={<Details />}></Route>
       </Route>
     </Routes>
   );
