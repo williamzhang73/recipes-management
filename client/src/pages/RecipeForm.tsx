@@ -1,4 +1,4 @@
-function AddRecipes() {
+function RecipeForm() {
   return (
     <div className="w-4/5 pt-8 flex justify-center">
       <form className=" flex flex-col justify-center border-2 items-center bg-white  h-5/6 w-4/5 rounded-lg gap-y-3 text-gray-700">
@@ -99,4 +99,4 @@ function AddRecipes() {
     </div>
   );
 }
-export default AddRecipes;
+export default RecipeForm;

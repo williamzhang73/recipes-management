@@ -82,6 +82,25 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     next(error);
   }
 });
+app.post('/api/comments', async (req, res, next) => {
+  try {
+    const userId = 1;
+    const recipeId = 1;
+    const { message } = req.body;
+    if (!userId) throw new ClientError(400, 'userId required');
+    if (!recipeId) throw new ClientError(400, 'recipeId required');
+    if (!message) throw new ClientError(400, 'message required');
+    const sql = `insert into "comments" ("userId", "recipeId", "message") 
+    values ($1, $2, $3) 
+    returning *;`;
+    const result = await db.query(sql, [userId, recipeId, message]);
+    const [row] = result.rows;
+    res.status(201).json(row);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 /* app.post('/api/recipe', async (req, res, next) => {
   try {
   } catch (error) {

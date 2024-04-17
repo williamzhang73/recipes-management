@@ -1,7 +1,10 @@
 /* import { useState } from 'react'; */
-import React from 'react';
+
 import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../components/useUser';
+
 function SignInForm() {
+  const { handleSignIn } = useUser();
   const navigate = useNavigate();
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -16,9 +19,13 @@ function SignInForm() {
         body: JSON.stringify(formObject),
       };
       const response = await fetch('/api/auth/sign-in', req);
-      if (!response) throw new Error('Network response not ok.');
-      alert('login successfully');
-      navigate('/myrecipes');
+      if (!response.ok) throw new Error('Network response not ok.');
+      const data = await response.json();
+      const { user, token } = data;
+      handleSignIn(user, token);
+      console.log('user: ', user);
+      console.log('token: ', token);
+      navigate('/');
     } catch (error) {
       console.error(error);
     }

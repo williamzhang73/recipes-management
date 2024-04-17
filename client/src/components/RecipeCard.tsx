@@ -1,5 +1,6 @@
 import { FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import RecipeCommentForm from '../pages/RecipeCommentForm';
 type Props = {
   details: boolean;
 };
@@ -34,11 +35,7 @@ function RecipeCard({ details }: Props) {
               <Link to="/details">
                 <span className="block bg-blue-300 w-12 rounded">More</span>
               </Link>
-              {}
-              <form>
-                <textarea className="border-2 rounded "></textarea>
-                <button className="block text-blue-500 ml-32">Post</button>
-              </form>
+              <RecipeCommentForm />
             </div>
           </div>
           <div className="absolute bg-orange-300 rounded mt-2 ml-2">
