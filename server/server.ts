@@ -5,10 +5,12 @@ import pg from 'pg';
 import jwt from 'jsonwebtoken';
 import {
   ClientError,
+  authMiddleware,
   defaultMiddleware,
   errorMiddleware,
 } from './lib/index.js';
 import argon2, { hash } from 'argon2';
+import { brotliDecompress } from 'node:zlib';
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -101,13 +103,50 @@ app.post('/api/comments', async (req, res, next) => {
     next(error);
   }
 });
-/* app.post('/api/recipe', async (req, res, next) => {
+type Recipe = {
+  title: string;
+  imageUrl: string;
+  preparationTime: string;
+  cuisine: string;
+  glutenFree: string;
+  vegetarian: string;
+  ingredients: string;
+  instructions: string;
+};
+app.post('/api/recipe', authMiddleware, async (req, res, next) => {
   try {
+    const body = req.body as Recipe;
+    let glutenFree = false;
+    let vegetarian = false;
+    body.vegetarian === 'on' ? (vegetarian = true) : (vegetarian = false);
+    body.glutenFree === 'on' ? (glutenFree = true) : (glutenFree = false);
+    // modify userId
+    const userId = req.user?.userId;
+    // modify imageUrl
+    const imageUrl = '/images/1.png';
+    const sql = `insert into "recipes" 
+    ("userId", "title", "imageUrl", "preparationTime","cuisine", "glutenFree", "vegetarian", "ingredients", "instructions" )
+    values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    returning *`;
+    const params = [
+      userId,
+      body.title,
+      imageUrl,
+      body.preparationTime,
+      body.cuisine,
+      glutenFree,
+      vegetarian,
+      body.ingredients,
+      body.instructions,
+    ];
+    const result = await db.query(sql, params);
+    const [row] = result.rows;
+    res.status(201).json(row);
   } catch (error) {
     console.error(error);
     next(error);
   }
-}); */
+});
 /*
  * Middleware that handles paths that aren't handled by static middleware
  * or API route handlers.

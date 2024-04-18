@@ -19,12 +19,13 @@ function SignInForm() {
         body: JSON.stringify(formObject),
       };
       const response = await fetch('/api/auth/sign-in', req);
-      if (!response.ok) throw new Error('Network response not ok.');
+      if (!response.ok) {
+        alert(`username or password doesn't match.`);
+        throw new Error('Network response not ok.');
+      }
       const data = await response.json();
       const { user, token } = data;
       handleSignIn(user, token);
-      console.log('user: ', user);
-      console.log('token: ', token);
       navigate('/');
     } catch (error) {
       console.error(error);

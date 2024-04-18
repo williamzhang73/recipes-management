@@ -1,7 +1,42 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { readToken } from '../lib/data';
+import { useUser } from '../components/useUser';
+
 function RecipeForm() {
+  const navigate = useNavigate();
+  const { user } = useUser();
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (user) {
+      try {
+        const formData = new FormData(e.currentTarget);
+        const formObject = Object.fromEntries(formData);
+        const req = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${readToken()}`,
+          },
+          body: JSON.stringify(formObject),
+        };
+        const response = await fetch('/api/recipe', req);
+        if (!response.ok) throw new Error('Network response not ok.');
+        navigate('/myrecipes');
+      } catch (error) {
+        console.error(error);
+        throw new Error('recipe submitted failed');
+      }
+    } else {
+      alert('Login needed');
+      navigate('/sign-in');
+    }
+  }
   return (
     <div className="w-4/5 pt-8 flex justify-center">
-      <form className=" flex flex-col justify-center border-2 items-center bg-white  h-5/6 w-4/5 rounded-lg gap-y-3 text-gray-700">
+      <form
+        onSubmit={handleSubmit}
+        className=" flex flex-col justify-center border-2 items-center bg-white  h-5/6 w-4/5 rounded-lg gap-y-3 text-gray-700">
         <span className="block font-bold">Recipe Form</span>
         <div className="flex flex-col gap-y-2">
           <label className="flex justify-between">
@@ -83,11 +118,15 @@ function RecipeForm() {
           </div>
           <div className="flex justify-between">
             <span>ingredients</span>
-            <textarea className="border-2 rounded"></textarea>
+            <textarea
+              className="border-2 rounded"
+              name="ingredients"></textarea>
           </div>
           <div className="flex justify-between">
             <span>instructions</span>
-            <textarea className="border-2 rounded"></textarea>
+            <textarea
+              className="border-2 rounded"
+              name="instructions"></textarea>
           </div>
         </div>
         <span className="block">

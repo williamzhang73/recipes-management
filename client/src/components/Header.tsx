@@ -1,9 +1,11 @@
 import { Link, Outlet } from 'react-router-dom';
 import SideBar from './SideBar';
+import { useUser } from './useUser';
 function Header() {
+  const { user, handleSignOut } = useUser();
   return (
     <>
-      <div className="flex border-b-2 border-white justify-between w-full items-center">
+      <div className="flex border-b-2 border-white justify-between w-full items-center h-14">
         <Link to="/">
           <span className="font-sans italic font-bold my-3 text-xl">
             Recipes
@@ -15,7 +17,18 @@ function Header() {
             Search
           </button>
         </span>
-        <span className="my-3 text-xs text-gray-700">Sign out</span>
+        {user ? (
+          <span
+            className="my-3 text-xs text-gray-700"
+            onClick={() => {
+              handleSignOut();
+            }}>
+            Sign out
+          </span>
+        ) : (
+          <span></span>
+        )}
+        {/*   <span className="my-3 text-xs text-gray-700">Sign out</span> */}
       </div>
       <SideBar />
       <Outlet />
