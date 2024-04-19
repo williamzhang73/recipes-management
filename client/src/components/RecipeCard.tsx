@@ -5,8 +5,9 @@ import { Recipe1 } from '../pages/Ideas';
 type Props = {
   details: boolean;
   recipe: Recipe1;
+  handleCommentPost: (message, recipeId) => void;
 };
-function RecipeCard({ details, recipe }: Props) {
+function RecipeCard({ details, recipe, handleCommentPost }: Props) {
   const {
     recipeId,
     username,
@@ -58,7 +59,10 @@ function RecipeCard({ details, recipe }: Props) {
                 onClick={handleClick}>
                 More
               </span>
-              <RecipeCommentForm recipeId={recipe.recipeId} />
+              <RecipeCommentForm
+                handleCommentPost={handleCommentPost}
+                recipeId={recipe.recipeId}
+              />
             </div>
           </div>
           <div className="absolute bg-orange-300 rounded mt-2 ml-2">

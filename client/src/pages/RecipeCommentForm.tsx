@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { readToken } from '../lib/data';
-import { useUser } from '../components/useUser';
 type Props = {
+  handleCommentPost: (message, recipeId) => void;
   recipeId: string;
 };
-function RecipeCommentForm({ recipeId }: Props) {
+function RecipeCommentForm({ handleCommentPost, recipeId }: Props) {
   const [message, setMessage] = useState('');
-  const { user } = useUser();
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (user) {
+    handleCommentPost(message, recipeId);
+    setMessage('');
+    /* if (user) {
       try {
-        const messageObject = {
+         const messageObject = {
           userId: user.userId,
           message,
           recipeId: recipeId,
-        };
+        }; 
         const req = {
           method: 'POST',
           headers: {
@@ -32,7 +32,7 @@ function RecipeCommentForm({ recipeId }: Props) {
       }
     } else {
       alert('login required.');
-    }
+    } */
   }
   return (
     <form onSubmit={handleSubmit}>
