@@ -1,24 +1,37 @@
 import React, { useState } from 'react';
-
-function RecipeCommentForm() {
+import { readToken } from '../lib/data';
+import { useUser } from '../components/useUser';
+type Props = {
+  recipeId: string;
+};
+function RecipeCommentForm({ recipeId }: Props) {
   const [message, setMessage] = useState('');
+  const { user } = useUser();
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    try {
-      const formData = new FormData(e.currentTarget);
-      const formObject = Object.fromEntries(formData);
-      const req = {
-        method: 'post',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify(formObject),
-      };
-      const response = await fetch('/api/comments', req);
-      if (!response) throw new Error('Network response not ok.');
-      setMessage('');
-    } catch (error) {
-      console.error(error);
+    if (user) {
+      try {
+        const messageObject = {
+          userId: user.userId,
+          message,
+          recipeId: recipeId,
+        };
+        const req = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${readToken()}`,
+          },
+          body: JSON.stringify(messageObject),
+        };
+        const response = await fetch('/api/comments', req);
+        if (!response) throw new Error('Network response not ok.');
+        setMessage('');
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      alert('login required.');
     }
   }
   return (

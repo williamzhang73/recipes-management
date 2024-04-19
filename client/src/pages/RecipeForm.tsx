@@ -11,14 +11,14 @@ function RecipeForm() {
     if (user) {
       try {
         const formData = new FormData(e.currentTarget);
-        const formObject = Object.fromEntries(formData);
+        /*       const formObject = Object.fromEntries(formData); */
         const req = {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            /*     'Content-Type': 'application/json', */
             Authorization: `Bearer ${readToken()}`,
           },
-          body: JSON.stringify(formObject),
+          body: formData,
         };
         const response = await fetch('/api/recipe', req);
         if (!response.ok) throw new Error('Network response not ok.');

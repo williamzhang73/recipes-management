@@ -11,6 +11,8 @@ import {
 } from './lib/index.js';
 import argon2, { hash } from 'argon2';
 import { brotliDecompress } from 'node:zlib';
+import { uploadsMiddleware } from './lib/uploads-middleware.js';
+import { idText } from 'typescript';
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -21,7 +23,16 @@ const db = new pg.Pool({
     rejectUnauthorized: false,
   },
 });
-
+type Recipe = {
+  title: string;
+  imageUrl: string;
+  preparationTime: string;
+  cuisine: string;
+  glutenFree: string;
+  vegetarian: string;
+  ingredients: string;
+  instructions: string;
+};
 const app = express();
 const tokenSecret = process.env.TOKEN_SECRET;
 if (!tokenSecret) throw new Error('TOKEN_SECRET not found in .env');
@@ -84,11 +95,11 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     next(error);
   }
 });
-app.post('/api/comments', async (req, res, next) => {
+app.post('/api/comments', authMiddleware, async (req, res, next) => {
   try {
-    const userId = 1;
-    const recipeId = 1;
-    const { message } = req.body;
+    const userId = req.user?.userId;
+    const { message, recipeId } = req.body;
+    console.log(req.body.recipeId);
     if (!userId) throw new ClientError(400, 'userId required');
     if (!recipeId) throw new ClientError(400, 'recipeId required');
     if (!message) throw new ClientError(400, 'message required');
@@ -103,45 +114,94 @@ app.post('/api/comments', async (req, res, next) => {
     next(error);
   }
 });
-type Recipe = {
-  title: string;
-  imageUrl: string;
-  preparationTime: string;
-  cuisine: string;
-  glutenFree: string;
-  vegetarian: string;
-  ingredients: string;
-  instructions: string;
-};
-app.post('/api/recipe', authMiddleware, async (req, res, next) => {
+
+app.get('/api/comments/:recipeId', async (req, res, next) => {
   try {
-    const body = req.body as Recipe;
-    let glutenFree = false;
-    let vegetarian = false;
-    body.vegetarian === 'on' ? (vegetarian = true) : (vegetarian = false);
-    body.glutenFree === 'on' ? (glutenFree = true) : (glutenFree = false);
-    // modify userId
-    const userId = req.user?.userId;
-    // modify imageUrl
-    const imageUrl = '/images/1.png';
-    const sql = `insert into "recipes" 
+    const { recipeId } = req.params;
+    if (!recipeId) throw new ClientError(400, 'recipeId is required.');
+    const sql = `select u."username", c.* 
+    from "users" u 
+    join "comments" c 
+    using ("userId")
+    where c."recipeId"=$1`;
+    const result = await db.query(sql, [recipeId]);
+    const rows = result.rows;
+    if (!rows) throw new ClientError(404, 'recipeId not found.');
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.post(
+  '/api/recipe',
+  authMiddleware,
+  uploadsMiddleware.single('image'),
+  async (req, res, next) => {
+    try {
+      if (!req.file) throw new Error('no file exist.');
+      console.log('file: ', req.file);
+      const body = req.body as Recipe;
+      let glutenFree = false;
+      let vegetarian = false;
+      body.vegetarian === 'on' ? (vegetarian = true) : (vegetarian = false);
+      body.glutenFree === 'on' ? (glutenFree = true) : (glutenFree = false);
+      // modify userId
+      const userId = req.user?.userId;
+      // modify imageUrl
+      const imageUrl = `/images/${req.file.filename}`;
+      const sql = `insert into "recipes" 
     ("userId", "title", "imageUrl", "preparationTime","cuisine", "glutenFree", "vegetarian", "ingredients", "instructions" )
     values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     returning *`;
-    const params = [
-      userId,
-      body.title,
-      imageUrl,
-      body.preparationTime,
-      body.cuisine,
-      glutenFree,
-      vegetarian,
-      body.ingredients,
-      body.instructions,
-    ];
-    const result = await db.query(sql, params);
-    const [row] = result.rows;
-    res.status(201).json(row);
+      const params = [
+        userId,
+        body.title,
+        imageUrl,
+        body.preparationTime,
+        body.cuisine,
+        glutenFree,
+        vegetarian,
+        body.ingredients,
+        body.instructions,
+      ];
+      const result = await db.query(sql, params);
+      const [row] = result.rows;
+      res.status(201).json(row);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+app.get('/api/myrecipes', authMiddleware, async (req, res, next) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) throw new ClientError(400, 'userId is needed.');
+    const sql = `select "recipes".*, "users"."username" 
+    from "recipes" 
+    join "users" 
+    using ("userId") 
+    where "userId"=$1;`;
+    const result = await db.query(sql, [userId]);
+    const rows = result.rows;
+    if (!rows) throw new ClientError(404, 'userId not found.');
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+app.get('/api/ideas', async (req, res, next) => {
+  try {
+    const sql = `select "recipes".*, "users"."username" 
+    from "recipes" 
+    join "users" 
+    using ("userId");`;
+    const result = await db.query(sql);
+    const rows = result.rows;
+    res.status(200).json(rows);
   } catch (error) {
     console.error(error);
     next(error);
