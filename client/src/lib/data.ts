@@ -1,3 +1,4 @@
+import { User } from '../components/UserContext';
 import { PostComment, Comment } from '../pages/Details';
 
 export const tokenKey = 'um.token';
@@ -13,6 +14,26 @@ export function readToken(): string {
   const token = sessionStorage.getItem(tokenKey);
   if (!token) throw new Error('No token found');
   return token;
+}
+
+export function saveUser(user: User | undefined): void {
+  if (user) {
+    sessionStorage.setItem('user', JSON.stringify(user));
+  } else {
+    sessionStorage.removeItem('user');
+  }
+}
+
+export function readUser(): User | null {
+  const getUser = sessionStorage.getItem('user');
+  let user = null as User | null;
+  if (getUser) {
+    user = JSON.parse(getUser);
+    console.log('user: ', user);
+    return user;
+  }
+  if (getUser === null) throw new Error('No user found');
+  return user;
 }
 
 export async function insertComment(

@@ -18,13 +18,16 @@ function Header() {
           </button>
         </span>
         {user ? (
-          <span
-            className="my-3 text-xs text-gray-700"
-            onClick={() => {
-              handleSignOut();
-            }}>
-            Sign out
-          </span>
+          <div className="flex flex-col items-center">
+            <span>welcome, {user.username}</span>
+            <span
+              className="text-xs text-gray-700"
+              onClick={() => {
+                handleSignOut();
+              }}>
+              Sign out
+            </span>
+          </div>
         ) : (
           <span></span>
         )}

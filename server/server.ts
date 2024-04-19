@@ -119,11 +119,13 @@ app.get('/api/comments/:recipeId', async (req, res, next) => {
   try {
     const { recipeId } = req.params;
     if (!recipeId) throw new ClientError(400, 'recipeId is required.');
+
     const sql = `select u."username", c.* 
     from "users" u 
     join "comments" c 
     using ("userId")
-    where c."recipeId"=$1`;
+    where c."recipeId"=$1
+    order by "createdAt" desc;`;
     const result = await db.query(sql, [recipeId]);
     const rows = result.rows;
     if (!rows) throw new ClientError(404, 'recipeId not found.');
