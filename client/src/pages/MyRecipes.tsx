@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { readToken } from '../lib/data';
+import { insertComment, readToken } from '../lib/data';
 import RecipeCard from '../components/RecipeCard';
 import { Recipe1 } from './Ideas';
 export type Recipe = {
@@ -32,7 +32,6 @@ function MyRecipes() {
         const response = await fetch('/api/myrecipes', req);
         if (!response.ok) throw new Error('Network response not ok.');
         const data = await response.json();
-        console.log('fetched recipes: ', data);
         setData(data);
       } catch (error) {
         console.error(error);
@@ -43,9 +42,33 @@ function MyRecipes() {
     }
     fetchData();
   }, []);
+
+  async function handleCommentPost(message: string, recipeId: string) {
+    if (user) {
+      const messageObject = {
+        userId: user.userId,
+        message,
+        recipeId,
+      };
+      try {
+        await insertComment(messageObject);
+        alert('message posted.');
+      } catch (error) {
+        console.error(error);
+        setError(error);
+      }
+    } else {
+      alert('login required.');
+    }
+  }
+
   const mapped = data?.map((recipe) => (
     <li key={recipe.recipeId} className="flex justify-center">
-      <RecipeCard details={true} recipe={recipe} />
+      <RecipeCard
+        details={true}
+        recipe={recipe}
+        handleCommentPost={handleCommentPost}
+      />
     </li>
   ));
   if (isLoading) return <div>loading....</div>;

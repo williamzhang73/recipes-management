@@ -29,7 +29,6 @@ export function readUser(): User | null {
   let user = null as User | null;
   if (getUser) {
     user = JSON.parse(getUser);
-    console.log('user: ', user);
     return user;
   }
   if (getUser === null) throw new Error('No user found');
