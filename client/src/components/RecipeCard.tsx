@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import RecipeCommentForm from '../pages/RecipeCommentForm';
 import { Recipe1 } from '../pages/Ideas';
 import { readToken } from '../lib/data';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser } from './useUser';
 type Props = {
   details: boolean;
@@ -17,6 +17,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
   const { user } = useUser();
   const {
     recipeId,
+    userId,
     username,
     title,
     imageUrl,
@@ -30,7 +31,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
   } = recipe;
   const navigate = useNavigate();
   const favorite = { color: 'red' };
-  const userId = user?.userId;
+  /*   const userId = user?.userId; */
   useEffect(() => {
     async function fetchIsLikes() {
       const req = {
@@ -50,13 +51,8 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
     }
     async function fetchLikesCount() {
       try {
-        const req = {
-          headers: {
-            authorization: `Bearer ${readToken()}`,
-          },
-        };
         if (!recipeId) throw new Error('recipeId required.');
-        const response = await fetch(`/api/likes/${recipeId}`, req);
+        const response = await fetch(`/api/likes/${recipeId}`);
         const data = await response.json();
         const count = data.count as number;
         if (!count) return setLikesCount(0);
@@ -66,9 +62,12 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
         throw new Error('fetch likes count failed');
       }
     }
-    fetchIsLikes();
+    if (user) {
+      fetchIsLikes();
+    }
+
     fetchLikesCount();
-  }, [isLikes]);
+  }, [isLikes, likesCount]);
 
   function handleClick() {
     navigate('/details', { state: recipe });
@@ -106,9 +105,14 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
     setIsLikes(!isLikes);
   }
 
-  function handleFaClick(recipeId: string, userId: string) {
-    handleFaClickStyle();
-    handleFaClickData(recipeId, userId);
+  function handleFaClick(recipeId: string, userId: string | undefined) {
+    if (user) {
+      handleFaClickStyle();
+      if (!userId) throw new Error('userId is undefined.');
+      handleFaClickData(recipeId, userId);
+    } else {
+      alert('login required.');
+    }
   }
   return (
     <>
@@ -135,8 +139,10 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
               <span className="block">{title}</span>
               <span className="block">{cuisine}</span>
               <span
-                className="block"
-                onClick={() => handleFaClick(recipeId, userId)}>
+                className="block w-fit"
+                onClick={() =>
+                  handleFaClick(recipeId, user?.userId.toString())
+                }>
                 {isLikes ? (
                   <FaHeart style={favorite} className="inline" />
                 ) : (

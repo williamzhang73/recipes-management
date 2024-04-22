@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { insertComment, readToken } from '../lib/data';
+import { readToken } from '../lib/data';
 import RecipeCard from '../components/RecipeCard';
 import { Recipe1 } from './Ideas';
 export type Recipe = {
@@ -16,10 +16,15 @@ export type Recipe = {
   instructions: string;
   createdAt: string;
 };
-function MyRecipes() {
+
+type Props = {
+  handleCommentPost: (recipeId: string, message: string) => void;
+  error: unknown;
+  setError: (error: unknown) => void;
+};
+function MyRecipes({ handleCommentPost, error, setError }: Props) {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<unknown>();
   const [data, setData] = useState<Recipe1[]>();
   useEffect(() => {
     async function fetchData() {
@@ -47,25 +52,6 @@ function MyRecipes() {
     fetchData();
   }, []);
 
-  async function handleCommentPost(message: string, recipeId: string) {
-    if (user) {
-      const messageObject = {
-        userId: user.userId,
-        message,
-        recipeId,
-      };
-      try {
-        await insertComment(messageObject);
-        alert('message posted.');
-      } catch (error) {
-        console.error(error);
-        setError(error);
-      }
-    } else {
-      alert('login required.');
-    }
-  }
-
   const mapped = data?.map((recipe) => (
     <li key={recipe.recipeId} className="flex justify-center">
       <RecipeCard
@@ -79,7 +65,9 @@ function MyRecipes() {
   if (error) return <div>data fetch failed</div>;
   return (
     <>
-      {user && <ul className="w-4/5 h-screen">{mapped}</ul>}
+      {user && (
+        <ul className="w-4/5 h-screen border-l-2 border-white">{mapped}</ul>
+      )}
       {!user && <span>login required.</span>}
     </>
   );

@@ -212,21 +212,25 @@ app.get('/api/ideas', async (req, res, next) => {
 });
 
 app.get('/api/likes/:userId/:recipeId', async (req, res, next) => {
-  const { recipeId, userId } = req.params;
-  console.log('userId: ', userId);
-  if (!recipeId) throw new ClientError(400, 'recipeId is required.');
-  if (!userId) throw new ClientError(400, 'userId is required.');
-  const selectSql = `select * from "likes" where "recipeId"=$1 and "userId"=$2;`;
-  const selectResult = await db.query(selectSql, [recipeId, userId]);
-  const selectRows = selectResult.rows;
-  if (selectRows.length === 0) {
-    res.json('dislike');
-  } else {
-    res.json('like');
+  try {
+    const { recipeId, userId } = req.params;
+    if (!recipeId) throw new ClientError(400, 'recipeId is required.');
+    if (!userId) throw new ClientError(400, 'userId is required.');
+    const selectSql = `select * from "likes" where "recipeId"=$1 and "userId"=$2;`;
+    const selectResult = await db.query(selectSql, [recipeId, userId]);
+    const selectRows = selectResult.rows;
+    if (selectRows.length === 0) {
+      res.json('dislike');
+    } else {
+      res.json('like');
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
-app.get('/api/likes/:recipeId', authMiddleware, async (req, res, next) => {
+app.get('/api/likes/:recipeId', async (req, res, next) => {
   try {
     const { recipeId } = req.params;
     if (!recipeId) throw new ClientError(400, 'recipeId is required.');
@@ -255,7 +259,6 @@ app.post('/api/likes', authMiddleware, async (req, res, next) => {
     const selectResult = await db.query(selectSql, [recipeId, userId]);
     const selectRows = selectResult.rows;
     if (selectRows.length === 0) {
-      console.log('inserting');
       const insertResult = await db.query(insertSql, [recipeId, userId]);
       const insertRows = insertResult.rows;
       res.status(201).json('inserted');
@@ -269,12 +272,26 @@ app.post('/api/likes', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
-/*
- * Middleware that handles paths that aren't handled by static middleware
- * or API route handlers.
- * This must be the _last_ non-error middleware installed, after all the
- * get/post/put/etc. route handlers and just before errorMiddleware.
- */
+
+app.get('/api/fetchlikes/:userId', authMiddleware, async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) throw new ClientError(400, 'userId is required.');
+    const sql = `select r.*, u."username" 
+    from "likes" l 
+    join "users" u using ("userId") 
+    join "recipes" r using ("recipeId") 
+    where l."userId"=$1;`;
+    const result = await db.query(sql, [userId]);
+    const rows = result.rows;
+    if (!rows) throw new ClientError(404, 'userId not found.');
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 app.use(defaultMiddleware(reactStaticDir));
 
 app.use(errorMiddleware);
