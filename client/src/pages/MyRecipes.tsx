@@ -23,20 +23,24 @@ function MyRecipes() {
   const [data, setData] = useState<Recipe1[]>();
   useEffect(() => {
     async function fetchData() {
-      try {
-        const req = {
-          headers: {
-            authorization: `Bearer ${readToken()}`,
-          },
-        };
-        const response = await fetch('/api/myrecipes', req);
-        if (!response.ok) throw new Error('Network response not ok.');
-        const data = await response.json();
-        setData(data);
-      } catch (error) {
-        console.error(error);
-        setError(error);
-      } finally {
+      if (user) {
+        try {
+          const req = {
+            headers: {
+              authorization: `Bearer ${readToken()}`,
+            },
+          };
+          const response = await fetch('/api/myrecipes', req);
+          if (!response.ok) throw new Error('Network response not ok.');
+          const data = await response.json();
+          setData(data);
+        } catch (error) {
+          console.error(error);
+          setError(error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
         setIsLoading(false);
       }
     }
@@ -72,11 +76,11 @@ function MyRecipes() {
     </li>
   ));
   if (isLoading) return <div>loading....</div>;
-  if (error) return <div>page load failed</div>;
+  if (error) return <div>data fetch failed</div>;
   return (
     <>
       {user && <ul className="w-4/5 h-screen">{mapped}</ul>}
-      {!user && <span>please login first</span>}
+      {!user && <span>login required.</span>}
     </>
   );
 }

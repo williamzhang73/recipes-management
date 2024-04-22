@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import RecipeCommentForm from '../pages/RecipeCommentForm';
 import { Recipe1 } from '../pages/Ideas';
 import { readToken } from '../lib/data';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useUser } from './useUser';
 type Props = {
   details: boolean;
   recipe: Recipe1;
@@ -11,11 +12,13 @@ type Props = {
 };
 function RecipeCard({ details, recipe, handleCommentPost }: Props) {
   const [isLikes, setIsLikes] = useState<boolean>(false);
+  const [likesCount, setLikesCount] = useState(0);
+
+  const { user } = useUser();
   const {
     recipeId,
     username,
     title,
-    userId,
     imageUrl,
     preparationTime,
     cuisine,
@@ -26,9 +29,10 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
     createdAt,
   } = recipe;
   const navigate = useNavigate();
-
+  const favorite = { color: 'red' };
+  const userId = user?.userId;
   useEffect(() => {
-    async function fetchLikes() {
+    async function fetchIsLikes() {
       const req = {
         method: 'get',
         headers: {
@@ -44,35 +48,67 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
         setIsLikes(true);
       }
     }
-    fetchLikes();
-  }, []);
+    async function fetchLikesCount() {
+      try {
+        const req = {
+          headers: {
+            authorization: `Bearer ${readToken()}`,
+          },
+        };
+        if (!recipeId) throw new Error('recipeId required.');
+        const response = await fetch(`/api/likes/${recipeId}`, req);
+        const data = await response.json();
+        const count = data.count as number;
+        if (!count) return setLikesCount(0);
+        setLikesCount(count);
+      } catch (error) {
+        console.log(error);
+        throw new Error('fetch likes count failed');
+      }
+    }
+    fetchIsLikes();
+    fetchLikesCount();
+  }, [isLikes]);
 
   function handleClick() {
     navigate('/details', { state: recipe });
   }
 
-  async function handleFaClick(recipeId: string, userId: string) {
-    try {
-      const req = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${readToken()}`,
-        },
-        body: JSON.stringify({ recipeId, userId }),
-      };
-      const response = await fetch('/api/likes', req);
-      if (!response.ok) throw new Error('Network response not ok.');
-      const data = await response.json();
-      if (data === 'inserted') {
-        setIsLikes(true);
-      } else {
-        setIsLikes(false);
+  async function handleFaClickData(recipeId: string, userId: string) {
+    if (user) {
+      try {
+        const req = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${readToken()}`,
+          },
+          body: JSON.stringify({ recipeId, userId }),
+        };
+        const response = await fetch('/api/likes', req);
+        if (!response.ok) throw new Error('Network response not ok.');
+        const data = await response.json();
+        if (data === 'inserted') {
+          setIsLikes(true);
+        } else {
+          setIsLikes(false);
+        }
+      } catch (error) {
+        console.error(error);
+        throw new Error('faHeart clicks failed.');
       }
-    } catch (error) {
-      console.error(error);
-      throw new Error('faHeart clicks failed.');
+    } else {
+      alert('login required');
     }
+  }
+
+  function handleFaClickStyle() {
+    setIsLikes(!isLikes);
+  }
+
+  function handleFaClick(recipeId: string, userId: string) {
+    handleFaClickStyle();
+    handleFaClickData(recipeId, userId);
   }
   return (
     <>
@@ -102,11 +138,11 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
                 className="block"
                 onClick={() => handleFaClick(recipeId, userId)}>
                 {isLikes ? (
-                  <FaHeart color="red" className="inline" />
+                  <FaHeart style={favorite} className="inline" />
                 ) : (
                   <FaHeart className="inline" />
                 )}
-                3 likes
+                {likesCount} likes
               </span>
 
               <span

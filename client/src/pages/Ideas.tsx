@@ -58,6 +58,6 @@ function Ideas() {
   ));
   if (isLoading) return <div>loading....</div>;
   if (error) return <div>page load failed</div>;
-  return <ul className="w-4/5">{mapped}</ul>;
+  return <ul className="w-4/5 h-fit border-l-2 border-white">{mapped}</ul>;
 }
 export default Ideas;

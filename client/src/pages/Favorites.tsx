@@ -5,7 +5,7 @@ function Favorites() {
   return (
     <div>
       {user && <span>my favorites</span>}
-      {!user && <span>please login before viewing</span>}
+      {!user && <span>login required</span>}
     </div>
   );
 }

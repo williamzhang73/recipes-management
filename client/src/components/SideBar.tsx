@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 function SideBar() {
   return (
-    <div className="border-r-2 w-1/5 h-screen border-white">
+    <div className="w-1/5 h-screen">
       <ul className="flex flex-col gap-y-4 text-gray-700">
         <Link to="/ideas">
           <li>Ideas</li>

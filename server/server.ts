@@ -13,6 +13,7 @@ import argon2, { hash } from 'argon2';
 import { brotliDecompress } from 'node:zlib';
 import { uploadsMiddleware } from './lib/uploads-middleware.js';
 import { idText } from 'typescript';
+import { error } from 'node:console';
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -212,6 +213,7 @@ app.get('/api/ideas', async (req, res, next) => {
 
 app.get('/api/likes/:userId/:recipeId', async (req, res, next) => {
   const { recipeId, userId } = req.params;
+  console.log('userId: ', userId);
   if (!recipeId) throw new ClientError(400, 'recipeId is required.');
   if (!userId) throw new ClientError(400, 'userId is required.');
   const selectSql = `select * from "likes" where "recipeId"=$1 and "userId"=$2;`;
@@ -221,6 +223,24 @@ app.get('/api/likes/:userId/:recipeId', async (req, res, next) => {
     res.json('dislike');
   } else {
     res.json('like');
+  }
+});
+
+app.get('/api/likes/:recipeId', authMiddleware, async (req, res, next) => {
+  try {
+    const { recipeId } = req.params;
+    if (!recipeId) throw new ClientError(400, 'recipeId is required.');
+    const sql = `select count(*) as count 
+                 from "likes" 
+                 where "recipeId"=$1 
+                 group by "recipeId";`;
+    const result = await db.query(sql, [recipeId]);
+    const [rows] = result.rows;
+    if (!rows) throw new ClientError(404, 'recipeId not found.');
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
@@ -238,13 +258,10 @@ app.post('/api/likes', authMiddleware, async (req, res, next) => {
       console.log('inserting');
       const insertResult = await db.query(insertSql, [recipeId, userId]);
       const insertRows = insertResult.rows;
-      /*       console.log('insertRows: ', insertRows); */
       res.status(201).json('inserted');
     } else {
-      /*       console.log('deleting'); */
       const deleteResult = await db.query(deleteSql, [recipeId, userId]);
       const deleteRows = deleteResult.rows;
-      console.log('deleteRows: ', deleteRows);
       res.json('deleted');
     }
   } catch (error) {

@@ -25,13 +25,9 @@ export function saveUser(user: User | undefined): void {
 }
 
 export function readUser(): User | null {
-  const getUser = sessionStorage.getItem('user');
-  let user = null as User | null;
-  if (getUser) {
-    user = JSON.parse(getUser);
-    return user;
-  }
-  if (getUser === null) throw new Error('No user found');
+  const userSession = sessionStorage.getItem('user');
+  if (!userSession) return null;
+  const user = JSON.parse(userSession) as User;
   return user;
 }
 

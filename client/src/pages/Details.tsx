@@ -7,6 +7,7 @@ import { Recipe1 } from './Ideas';
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
 import { insertComment } from '../lib/data';
+import LoadingPage from '../components/LoadingPage';
 export type PostComment = {
   userId: number;
   recipeId: string;
@@ -66,11 +67,16 @@ function Details() {
     }
   }
 
-  if (isLoading) return <div>loading...</div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center w-4/5 h-screen border-l-2 border-white">
+        <LoadingPage />
+      </div>
+    );
   if (error) return <div>page load failed</div>;
   return (
     <>
-      <div className="flex flex-col w-4/5 items-center h-screen gap-y-3">
+      <div className="flex flex-col w-4/5 items-center h-fit gap-y-3 border-l-2 border-white">
         <RecipeCard
           details={details}
           recipe={recipe}
