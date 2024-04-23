@@ -22,10 +22,10 @@ function SignUpForm() {
     }
   }
   return (
-    <div className="w-4/5 pt-8 flex justify-center">
+    <div className="w-full pt-8 flex justify-center border-l-2 border-white md:w-4/5">
       <form
         onSubmit={handleSubmit}
-        className=" flex flex-col justify-center border-2 items-center bg-white  h-3/5 w-4/5 rounded-lg gap-y-3">
+        className="flex flex-col justify-center border-2 py-10 items-center bg-white  h-fit w-4/5 rounded-lg gap-y-3">
         <span className="block font-bold">Register</span>
         <div>
           <input

@@ -33,19 +33,19 @@ function RecipeForm() {
     }
   }
   return (
-    <div className="w-4/5 pt-8 flex justify-center">
+    <div className="w-full border-l-2 border-white pt-8 flex justify-center md:w-4/5">
       <form
         onSubmit={handleSubmit}
-        className=" flex flex-col justify-center border-2 items-center bg-white  h-5/6 w-4/5 rounded-lg gap-y-3 text-gray-700">
+        className="flex flex-col justify-center border-2 rounded-lg gap-y-3 text-gray-700 items-center w-full mx-4 px-4 bg-white h-fit py-10 md:w-4/5 md:mx-0">
         <span className="block font-bold">Recipe Form</span>
-        <div className="flex flex-col gap-y-2">
+        <div className="flex flex-col w-full gap-y-2">
           <label className="flex justify-between">
             <span>title</span>
             <input
               type="text"
               name="title"
               id="title"
-              className="border-2 rounded w-40"
+              className="w-3/5 border-2 rounded md:w-40"
               required
             />
           </label>
@@ -53,7 +53,7 @@ function RecipeForm() {
           <label className="flex justify-between">
             <span>image</span>
             <input
-              className="w-40 text-xs"
+              className="w-3/5 text-xs md:w-40 "
               required
               type="file"
               name="image"
@@ -66,7 +66,7 @@ function RecipeForm() {
             <select
               name="preparationTime"
               required
-              className="border-2 w-40 rounded">
+              className="border-2 rounded md:w-40">
               <option>10</option>
               <option>20</option>
               <option>30</option>
@@ -82,7 +82,10 @@ function RecipeForm() {
 
           <div className="flex justify-between">
             <span>cuisine</span>
-            <select name="cuisine" required className="border-2 w-40 rounded">
+            <select
+              name="cuisine"
+              required
+              className="border-2 md:w-40 rounded">
               <option>American</option>
               <option>British</option>
               <option>Chinese</option>

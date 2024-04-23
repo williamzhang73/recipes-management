@@ -15,7 +15,7 @@ function SideBar({ sideBarList }: Props) {
     setListItem(list);
   }
   return (
-    <div className="w-1/5 h-screen">
+    <div className="h-fit w-full md:w-1/5 lg:h-screen">
       <ul className="flex flex-col gap-y-4 text-gray-700 w-fit">
         {sideBarList.map((list) => (
           <li
@@ -26,9 +26,9 @@ function SideBar({ sideBarList }: Props) {
           </li>
         ))}
       </ul>
-      <div className="mt-10">
+      <div className="flex flex-col items-start lg:mt-10 lg:flex-row">
         <Link to="/sign-in">
-          <button className="bg-blue-300 text-xs rounded h-5 w-12 text-gray-700 mr-4">
+          <button className="bg-blue-300 text-xs rounded h-5 w-12 text-gray-700 lg:mr-4">
             Sign In
           </button>
         </Link>

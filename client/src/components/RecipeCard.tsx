@@ -116,9 +116,9 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
   return (
     <>
       <div
-        className={`w-4/5  ${
-          !details ? 'h-screen' : 'h-3/5'
-        } bg-stone-200 flex flex-wrap justify-center gap-y-4 pt-8`}>
+        className={`${
+          !details ? 'h-screen' : 'h-full'
+        } w-full bg-stone-200 flex flex-wrap justify-center gap-y-4 md:w-4/5 lg:w-11/12`}>
         <div
           className={`bg-white ${
             !details ? 'w-4/5 h-3/5' : 'w-full'
@@ -133,7 +133,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
           </div>
           <div className="w-3/5 flex flex-col gap-y-5 ">
             <span className="block">{username}</span>
-            <div className="ml-8 flex flex-col gap-y-2">
+            <div className="flex flex-col gap-y-2 md:ml-8 ">
               <span className="block">{title}</span>
               <span className="block">{cuisine}</span>
               <span

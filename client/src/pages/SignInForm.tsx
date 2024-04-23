@@ -33,9 +33,9 @@ function SignInForm() {
   }
 
   return (
-    <div className="w-4/5 pt-8 flex justify-center">
+    <div className="w-full pt-8 flex justify-center border-l-2 border-white md:w-4/5">
       <form
-        className=" flex flex-col justify-center border-2 items-center bg-white  h-3/5 w-4/5 rounded-lg gap-y-3"
+        className="flex flex-col justify-center border-2 py-10 items-center bg-white  w-4/5 rounded-lg gap-y-3"
         onSubmit={handleSubmit}>
         <span className="block font-bold">Sign In</span>
         <div>

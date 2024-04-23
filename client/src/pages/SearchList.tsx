@@ -11,9 +11,11 @@ function SearchList({ handleCommentPost }: Props) {
   const results = location.state as Recipe1[];
   if (results.length === 0) return <div>no results.</div>;
   return (
-    <ul className="w-4/5 h-fit border-l-2 border-white">
+    <ul className="flex flex-wrap w-full p-3 gap-y-3 flex-col md:h-fit md:border-l-2 md:border-white md:w-4/5 md:flex-row">
       {results.map((result) => (
-        <li key={result.recipeId} className="flex justify-center">
+        <li
+          key={result.recipeId}
+          className="flex justify-center md:w-full lg:w-1/2">
           <RecipeCard
             recipe={result}
             handleCommentPost={handleCommentPost}

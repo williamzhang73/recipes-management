@@ -75,7 +75,7 @@ function Details() {
   if (error) return <div>page load failed</div>;
   return (
     <>
-      <div className="flex flex-col w-4/5 items-center h-fit gap-y-3 border-l-2 border-white relative">
+      <div className="flex flex-col w-full p-3 items-center h-fit gap-y-3 border-l-2 border-white relative lg:w-4/5 ">
         <RecipeCard
           details={true}
           recipe={recipe}

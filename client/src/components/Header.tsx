@@ -28,7 +28,7 @@ function Header() {
   }
   return (
     <>
-      <div className="flex border-b-2 border-white justify-between w-full items-center h-14">
+      <div className="border-b-2 border-white w-full flex flex-col justify-center items-center md:flex-row md:h-14 md:justify-between">
         <Link to="/">
           <span className="font-sans italic font-bold my-3 text-xl">
             Recipes
@@ -48,7 +48,7 @@ function Header() {
           </form>
         </span>
         {user ? (
-          <div className="flex flex-col items-center">
+          <div className="flex gap-x-4 items-center md:flex md:flex-col md:items-center">
             <span>welcome, {user.username}</span>
             <span
               className="text-xs text-gray-700"

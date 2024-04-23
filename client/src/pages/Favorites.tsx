@@ -55,7 +55,9 @@ function Favorites({ handleCommentPost, error, setError }: Props) {
   }, []);
 
   const mapped = data?.map((recipe) => (
-    <li key={recipe.recipeId} className="flex justify-center">
+    <li
+      key={recipe.recipeId}
+      className="flex justify-center md:w-full lg:w-1/2">
       <RecipeCard
         details={true}
         recipe={recipe}
@@ -69,7 +71,7 @@ function Favorites({ handleCommentPost, error, setError }: Props) {
     <>
       {user && (
         <>
-          <ul className="w-4/5 min-h-dvh border-l-2 border-white h-fit">
+          <ul className="flex flex-wrap w-full p-3 gap-y-3 flex-col md:h-fit md:border-l-2 md:border-white md:w-4/5 md:flex-row">
             {mapped}
           </ul>
           <div className="text-blue-600 w-screen sticky bottom-0">
