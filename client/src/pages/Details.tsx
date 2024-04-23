@@ -23,7 +23,6 @@ function Details() {
   const [error, setError] = useState<unknown>();
   const [commentsData, setCommentsData] = useState<Comment[]>([]);
   const recipe = useLocation().state as Recipe1;
-  const details = true;
   useEffect(() => {
     async function fetchComments() {
       try {
@@ -76,9 +75,9 @@ function Details() {
   if (error) return <div>page load failed</div>;
   return (
     <>
-      <div className="flex flex-col w-4/5 items-center h-fit gap-y-3 border-l-2 border-white">
+      <div className="flex flex-col w-4/5 items-center h-fit gap-y-3 border-l-2 border-white relative">
         <RecipeCard
-          details={details}
+          details={true}
           recipe={recipe}
           handleCommentPost={handleCommentPost}
         />
@@ -92,9 +91,7 @@ function Details() {
             </li>
           ))}
         </ul>
-
-        <div className="text-blue-600 w-4/5 flex justify-end">
-          {/* <RxTextAlignTop size={40} color="" /> */}
+        <div className="text-blue-600 sticky bottom-0">
           <ScrollToTopButton />
         </div>
       </div>

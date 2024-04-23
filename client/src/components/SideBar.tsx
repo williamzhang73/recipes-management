@@ -1,9 +1,14 @@
 import { Link } from 'react-router-dom';
 
 function SideBar() {
+  function handleClick(e: React.MouseEvent<HTMLUListElement, MouseEvent>) {
+    console.log('current target: ', e.currentTarget);
+  }
   return (
     <div className="w-1/5 h-screen">
-      <ul className="flex flex-col gap-y-4 text-gray-700">
+      <ul
+        className="flex flex-col gap-y-4 text-gray-700 w-fit"
+        onClick={handleClick}>
         <Link to="/ideas">
           <li>Ideas</li>
         </Link>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import { Recipe } from './MyRecipes';
+import ScrollToTopButton from '../components/ScrollToTopButton';
 export type Recipe1 = Recipe & {
   username: string;
 };
@@ -42,6 +43,13 @@ function Ideas({ handleCommentPost, error, setError }: Props) {
   ));
   if (isLoading) return <div>loading....</div>;
   if (error) return <div>page load failed</div>;
-  return <ul className="w-4/5 h-fit border-l-2 border-white">{mapped}</ul>;
+  return (
+    <>
+      <ul className="w-4/5 h-fit border-l-2 border-white">{mapped} </ul>
+      <div className="text-blue-600 sticky bottom-0 w-screen">
+        <ScrollToTopButton />
+      </div>
+    </>
+  );
 }
 export default Ideas;

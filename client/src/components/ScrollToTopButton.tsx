@@ -20,7 +20,7 @@ const ScrollToTopButton = () => {
   };
 
   return (
-    <div className="scroll-to-top">
+    <div className="scroll-to-top text-center">
       {showButton && (
         <button onClick={scrollToTop} className="scroll-button">
           <RxTextAlignTop size={40} />

@@ -11,6 +11,7 @@ import RecipeForm from './pages/RecipeForm';
 import { User, UserProvider } from './components/UserContext';
 import { insertComment, readUser, saveToken, saveUser } from './lib/data';
 import { useEffect, useState } from 'react';
+import SearchList from './pages/SearchList';
 
 export default function App() {
   const [user, setUser] = useState<User>();
@@ -89,11 +90,28 @@ export default function App() {
                 setError={setError}
               />
             }></Route>
-          <Route path="favorites" element={<Favorites />}></Route>
+          <Route
+            path="favorites"
+            element={
+              <Favorites
+                handleCommentPost={handleCommentPost}
+                error={error}
+                setError={setError}
+              />
+            }></Route>
           <Route path="addrecipe" element={<RecipeForm />}></Route>
           <Route path="sign-in" element={<SignInForm />}></Route>
           <Route path="sign-up" element={<SignUpForm />}></Route>
           <Route path="details" element={<Details />}></Route>
+          <Route
+            path="searchlist"
+            element={
+              <SearchList
+                handleCommentPost={handleCommentPost}
+                error={error}
+                setError={setError}
+              />
+            }></Route>
         </Route>
       </Routes>
     </UserProvider>

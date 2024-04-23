@@ -125,13 +125,12 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
             !details ? 'w-4/5 h-3/5' : 'w-full'
           } rounded-lg flex overflow-hidden text-gray-700 relative shadow `}>
           <div className="w-2/5">
-            <Link to="/details">
-              <img
-                src={`http://localhost:8080/${imageUrl}`}
-                alt="sushi"
-                className="h-full w-full object-cover"
-              />
-            </Link>
+            <img
+              src={`http://localhost:8080/${imageUrl}`}
+              alt="sushi"
+              className="h-full w-full object-cover"
+              onClick={handleClick}
+            />
           </div>
           <div className="w-3/5 flex flex-col gap-y-5 ">
             <span className="block">{username}</span>

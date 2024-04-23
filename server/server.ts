@@ -96,6 +96,7 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     next(error);
   }
 });
+
 app.post('/api/comments', authMiddleware, async (req, res, next) => {
   try {
     const userId = req.user?.userId;
@@ -178,6 +179,27 @@ app.post(
     }
   }
 );
+
+app.post('/api/searchRecipe', async (req, res, next) => {
+  console.log('search recipe route handler');
+  try {
+    const { searchInput } = req.body;
+    if (!searchInput)
+      throw new ClientError(400, 'searchInput field is required');
+    const sql = `select "recipes".*, "users"."username" 
+    from "recipes" 
+    join "users" 
+    using ("userId")
+    where "recipes"."ingredients" like $1;`;
+    const result = await db.query(sql, [`%${searchInput}%`]);
+    const rows = result.rows;
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 app.get('/api/myrecipes', authMiddleware, async (req, res, next) => {
   try {
     const userId = req.user?.userId;
@@ -196,6 +218,7 @@ app.get('/api/myrecipes', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
 app.get('/api/ideas', async (req, res, next) => {
   try {
     const sql = `select "recipes".*, "users"."username" 

@@ -3,6 +3,7 @@ import { useUser } from '../components/useUser';
 import { readToken } from '../lib/data';
 import RecipeCard from '../components/RecipeCard';
 import { Recipe1 } from './Ideas';
+import ScrollToTopButton from '../components/ScrollToTopButton';
 export type Recipe = {
   recipeId: string;
   title: string;
@@ -67,9 +68,14 @@ function Favorites({ handleCommentPost, error, setError }: Props) {
   return (
     <>
       {user && (
-        <ul className="w-4/5 min-h-dvh border-l-2 border-white h-fit">
-          {mapped}
-        </ul>
+        <>
+          <ul className="w-4/5 min-h-dvh border-l-2 border-white h-fit">
+            {mapped}
+          </ul>
+          <div className="text-blue-600 w-screen sticky bottom-0">
+            <ScrollToTopButton />
+          </div>
+        </>
       )}
       {!user && <span>login required.</span>}
     </>
