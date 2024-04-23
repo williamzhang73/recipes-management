@@ -1,5 +1,5 @@
 import { FaHeart } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import RecipeCommentForm from '../pages/RecipeCommentForm';
 import { Recipe1 } from '../pages/Ideas';
 import { readToken } from '../lib/data';
@@ -13,7 +13,6 @@ type Props = {
 function RecipeCard({ details, recipe, handleCommentPost }: Props) {
   const [isLikes, setIsLikes] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState(0);
-
   const { user } = useUser();
   const {
     recipeId,

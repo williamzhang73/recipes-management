@@ -4,6 +4,7 @@ import { useUser } from './useUser';
 function Header() {
   const { user, handleSignOut } = useUser();
   const navigate = useNavigate();
+  const sideBarList = ['Ideas', 'My Recipes', 'Favorites', 'Add Recipe'];
   async function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
@@ -60,9 +61,8 @@ function Header() {
         ) : (
           <span></span>
         )}
-        {/*   <span className="my-3 text-xs text-gray-700">Sign out</span> */}
       </div>
-      <SideBar />
+      <SideBar sideBarList={sideBarList} />
       <Outlet />
     </>
   );
