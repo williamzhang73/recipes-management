@@ -139,21 +139,23 @@ app.get('/api/comments/:recipeId', async (req, res, next) => {
 });
 
 app.post(
-  '/api/recipe',
+  '/api/addrecipe',
   authMiddleware,
   uploadsMiddleware.single('image'),
   async (req, res, next) => {
     try {
       if (!req.file) throw new Error('no file exist.');
-      console.log('file: ', req.file);
       const body = req.body as Recipe;
+
+      const ingredients = req.body.ingredients;
+      console.log('body: ', req.body);
+      console.log('ingredients in body : ', req.body.ingredients);
+
       let glutenFree = false;
       let vegetarian = false;
       body.vegetarian === 'on' ? (vegetarian = true) : (vegetarian = false);
       body.glutenFree === 'on' ? (glutenFree = true) : (glutenFree = false);
-      // modify userId
       const userId = req.user?.userId;
-      // modify imageUrl
       const imageUrl = `/images/${req.file.filename}`;
       const sql = `insert into "recipes" 
     ("userId", "title", "imageUrl", "preparationTime","cuisine", "glutenFree", "vegetarian", "ingredients", "instructions" )

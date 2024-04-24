@@ -11,16 +11,14 @@ function RecipeForm() {
     if (user) {
       try {
         const formData = new FormData(e.currentTarget);
-        /*       const formObject = Object.fromEntries(formData); */
         const req = {
           method: 'POST',
           headers: {
-            /*     'Content-Type': 'application/json', */
             Authorization: `Bearer ${readToken()}`,
           },
           body: formData,
         };
-        const response = await fetch('/api/recipe', req);
+        const response = await fetch('/api/addrecipe', req);
         if (!response.ok) throw new Error('Network response not ok.');
         navigate('/myrecipes');
       } catch (error) {
@@ -40,7 +38,7 @@ function RecipeForm() {
         <span className="block font-bold">Recipe Form</span>
         <div className="flex flex-col w-full gap-y-2">
           <label className="flex justify-between">
-            <span>title</span>
+            <span className="font-semibold">title</span>
             <input
               type="text"
               name="title"
@@ -51,7 +49,7 @@ function RecipeForm() {
           </label>
 
           <label className="flex justify-between">
-            <span>image</span>
+            <span className="font-semibold">image</span>
             <input
               className="w-3/5 text-xs md:w-40 "
               required
@@ -62,7 +60,7 @@ function RecipeForm() {
           </label>
 
           <div className="flex justify-between">
-            <span>preparation time</span>
+            <span className="font-semibold">preparation time</span>
             <select
               name="preparationTime"
               required
@@ -81,7 +79,7 @@ function RecipeForm() {
           </div>
 
           <div className="flex justify-between">
-            <span>cuisine</span>
+            <span className="font-semibold">cuisine</span>
             <select
               name="cuisine"
               required
@@ -107,7 +105,7 @@ function RecipeForm() {
                 name="glutenFree"
                 className="mr-2"
               />
-              <span>gluten free</span>
+              <span className="font-semibold">gluten free</span>
             </label>
             <label>
               <input
@@ -116,19 +114,19 @@ function RecipeForm() {
                 name="vegetarian"
                 className="mr-2"
               />
-              <span>vegetarian</span>
+              <span className="font-semibold">vegetarian</span>
             </label>
           </div>
-          <div className="flex justify-between">
-            <span>ingredients</span>
+          <div className="flex flex-wrap justify-between">
+            <span className="block w-full font-semibold">ingredients</span>
             <textarea
-              className="border-2 rounded"
+              className="block border-2 rounded w-full h-32"
               name="ingredients"></textarea>
           </div>
-          <div className="flex justify-between">
-            <span>instructions</span>
+          <div className="flex flex-wrap justify-between">
+            <span className="font-semibold">instructions</span>
             <textarea
-              className="border-2 rounded"
+              className="border-2 rounded w-full h-32"
               name="instructions"></textarea>
           </div>
         </div>
