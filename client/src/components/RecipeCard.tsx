@@ -22,15 +22,9 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
     imageUrl,
     preparationTime,
     cuisine,
-    glutenFree,
-    vegetarian,
-    ingredients,
-    instructions,
-    createdAt,
   } = recipe;
   const navigate = useNavigate();
   const favorite = { color: 'red' };
-  /*   const userId = user?.userId; */
   useEffect(() => {
     async function fetchIsLikes() {
       const req = {

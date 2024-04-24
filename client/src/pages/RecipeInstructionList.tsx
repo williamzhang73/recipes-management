@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Recipe1 } from './Ideas';
+import DOMPurify from 'dompurify';
 
 type Props = {
   recipe: Recipe1;
@@ -9,18 +10,19 @@ function RecipeInstructionList({
 }: Props) {
   const replacedIngredients = ingredients.replace(/\r\n/g, '<br/>');
   const replacedInstructions = instructions.replace(/\r\n/g, '<br/>');
-
+  const sanitizedIngredients = DOMPurify.sanitize(replacedIngredients);
+  const sanitizedInstructions = DOMPurify.sanitize(replacedInstructions);
   const ingredientRef = useRef<HTMLSpanElement>(null);
   const instructionRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (ingredientRef.current) {
-      ingredientRef.current.innerHTML = replacedIngredients;
+      ingredientRef.current.innerHTML = sanitizedIngredients;
     }
     if (instructionRef.current) {
-      instructionRef.current.innerHTML = replacedInstructions;
+      instructionRef.current.innerHTML = sanitizedInstructions;
     }
-  }, [replacedIngredients, replacedInstructions]);
+  }, []);
 
   return (
     <>
