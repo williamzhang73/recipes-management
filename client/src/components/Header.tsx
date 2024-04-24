@@ -1,21 +1,23 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import SideBar from './SideBar';
 import { useUser } from './useUser';
+import { useState } from 'react';
 function Header() {
   const { user, handleSignOut } = useUser();
   const navigate = useNavigate();
   const sideBarList = ['Ideas', 'My Recipes', 'Favorites', 'Add Recipe'];
+  const [listItem, setListItem] = useState('');
   async function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
       const formData = new FormData(e.currentTarget);
-      const ObjectData = Object.fromEntries(formData);
+      const objectData = Object.fromEntries(formData);
       const req = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(ObjectData),
+        body: JSON.stringify(objectData),
       };
       const response = await fetch('/api/searchRecipe', req);
       if (!response) throw new Error('Network response not ok.');
@@ -25,6 +27,10 @@ function Header() {
       console.error(error);
       throw new Error('query search failed.');
     }
+  }
+
+  function handleSetList(list: string) {
+    setListItem(list);
   }
   return (
     <>
@@ -41,6 +47,7 @@ function Header() {
               placeholder="search..."
               className="rounded border-2 border-gray-300"
               name="searchInput"
+              required
             />
             <button className="bg-blue-300 text-xs ml-1 rounded h-5 w-12 text-gray-700">
               Search
@@ -62,7 +69,11 @@ function Header() {
           <span></span>
         )}
       </div>
-      <SideBar sideBarList={sideBarList} />
+      <SideBar
+        sideBarList={sideBarList}
+        handleSetList={handleSetList}
+        listItem={listItem}
+      />
       <Outlet />
     </>
   );

@@ -6,8 +6,7 @@ type Props = {
 function RecipeInstructionList({ recipe }: Props) {
   return (
     <>
-      {/* <div className="font-bold">instructions</div> */}
-      <div className="bg-white h-auto w-4/5 rounded-lg text-gray-700">
+      <div className="bg-white w-full h-auto rounded-lg text-gray-700 md:w-4/5  lg:w-11/12">
         <div>
           <span className="block font-medium">ingredients</span>
           <span className="block">{recipe.ingredients}</span>

@@ -82,8 +82,10 @@ function Details() {
           handleCommentPost={handleCommentPost}
         />
         <RecipeInstructionList recipe={recipe} />
-        <div className=" w-4/5 font-bold text-gray-700">Comments</div>
-        <ul className="w-4/5 flex flex-col list-none">
+        <div className="w-full font-bold text-gray-700 md:w-4/5  lg:w-11/12">
+          Comments
+        </div>
+        <ul className="w-full flex flex-col list-none md:w-4/5 lg:w-11/12">
           {' '}
           {commentsData?.map((comment) => (
             <li key={comment.commentId} className="">

@@ -36,7 +36,7 @@ function RecipeForm() {
     <div className="w-full border-l-2 border-white pt-8 flex justify-center md:w-4/5">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col justify-center border-2 rounded-lg gap-y-3 text-gray-700 items-center w-full mx-4 px-4 bg-white h-fit py-10 md:w-4/5 md:mx-0">
+        className="flex flex-col justify-center border-2 rounded-lg gap-y-3 text-gray-700 items-center w-full mx-4 px-4 bg-white h-fit py-10 md:w-4/5 md:mx-0 lg:px-20">
         <span className="block font-bold">Recipe Form</span>
         <div className="flex flex-col w-full gap-y-2">
           <label className="flex justify-between">
