@@ -146,11 +146,7 @@ app.post(
     try {
       if (!req.file) throw new Error('no file exist.');
       const body = req.body as Recipe;
-
       const ingredients = req.body.ingredients;
-      console.log('body: ', req.body);
-      console.log('ingredients in body : ', req.body.ingredients);
-
       let glutenFree = false;
       let vegetarian = false;
       body.vegetarian === 'on' ? (vegetarian = true) : (vegetarian = false);
@@ -264,8 +260,10 @@ app.get('/api/likes/:recipeId', async (req, res, next) => {
                  where "recipeId"=$1 
                  group by "recipeId";`;
     const result = await db.query(sql, [recipeId]);
-    const [rows] = result.rows;
-    if (!rows) throw new ClientError(404, 'recipeId not found.');
+    let [rows] = result.rows;
+    if (!rows) {
+      rows = { count: 0 };
+    }
     res.status(200).json(rows);
   } catch (error) {
     console.error(error);

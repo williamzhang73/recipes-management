@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { readToken } from '../lib/data';
+import { readToken, readUser } from '../lib/data';
 import RecipeCard from '../components/RecipeCard';
 import { Recipe1 } from './Ideas';
 import ScrollToTopButton from '../components/ScrollToTopButton';
@@ -27,27 +27,26 @@ function Favorites({ handleCommentPost, error, setError }: Props) {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<Recipe1[]>();
-  const userId = user?.userId;
   useEffect(() => {
+    if (!user) return;
     async function fetchData() {
-      if (user) {
-        try {
-          const req = {
-            headers: {
-              authorization: `Bearer ${readToken()}`,
-            },
-          };
-          const response = await fetch(`/api/fetchlikes/${userId}`, req);
-          if (!response.ok) throw new Error('Network response not ok.');
-          const data = await response.json();
-          setData(data);
-        } catch (error) {
-          console.error(error);
-          setError(error);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
+      try {
+        const req = {
+          headers: {
+            authorization: `Bearer ${readToken()}`,
+          },
+        };
+        const response = await fetch(
+          `/api/fetchlikes/${readUser()?.userId}`,
+          req
+        );
+        if (!response.ok) throw new Error('Network response not ok.');
+        const data = await response.json();
+        setData(data);
+      } catch (error) {
+        console.error(error);
+        setError(error);
+      } finally {
         setIsLoading(false);
       }
     }
@@ -65,11 +64,11 @@ function Favorites({ handleCommentPost, error, setError }: Props) {
       />
     </li>
   ));
-  if (isLoading) return <div>loading....</div>;
-  if (error) return <div>data fetch failed</div>;
+  if (user && isLoading) return <div>loading....</div>;
+  if (user && error) return <div>data load failed</div>;
   return (
     <>
-      {user && (
+      {user && data?.length !== 0 && (
         <>
           <ul className="flex flex-wrap w-full p-3 gap-y-3 flex-col md:h-fit md:border-l-2 md:border-white md:w-4/5 md:flex-row">
             {mapped}
@@ -79,6 +78,7 @@ function Favorites({ handleCommentPost, error, setError }: Props) {
           </div>
         </>
       )}
+      {user && data?.length === 0 && <span>no results.</span>}
       {!user && <span>login required.</span>}
     </>
   );

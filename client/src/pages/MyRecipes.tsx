@@ -17,36 +17,34 @@ export type Recipe = {
   instructions: string;
   createdAt: string;
 };
-
 type Props = {
   handleCommentPost: (recipeId: string, message: string) => void;
   error: unknown;
   setError: (error: unknown) => void;
 };
+
 function MyRecipes({ handleCommentPost, error, setError }: Props) {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<Recipe1[]>();
+
   useEffect(() => {
+    if (!user) return;
     async function fetchData() {
-      if (user) {
-        try {
-          const req = {
-            headers: {
-              authorization: `Bearer ${readToken()}`,
-            },
-          };
-          const response = await fetch('/api/myrecipes', req);
-          if (!response.ok) throw new Error('Network response not ok.');
-          const data = await response.json();
-          setData(data);
-        } catch (error) {
-          console.error(error);
-          setError(error);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
+      try {
+        const req = {
+          headers: {
+            authorization: `Bearer ${readToken()}`,
+          },
+        };
+        const response = await fetch('/api/myrecipes', req);
+        if (!response.ok) throw new Error('Network response not ok.');
+        const data = await response.json();
+        setData(data);
+      } catch (error) {
+        console.error(error);
+        setError(error);
+      } finally {
         setIsLoading(false);
       }
     }
@@ -64,11 +62,11 @@ function MyRecipes({ handleCommentPost, error, setError }: Props) {
       />
     </li>
   ));
-  if (isLoading) return <div>loading....</div>;
-  if (error) return <div>data fetch failed</div>;
+  if (user && isLoading) return <div>loading....</div>;
+  if (user && error) return <div>page load failed</div>;
   return (
     <>
-      {user && (
+      {user && data?.length != 0 && (
         <>
           <ul className="flex flex-wrap w-full p-3 gap-y-3 flex-col md:h-fit md:border-l-2 md:border-white md:w-4/5 md:flex-row">
             {mapped}
@@ -78,6 +76,7 @@ function MyRecipes({ handleCommentPost, error, setError }: Props) {
           </div>
         </>
       )}
+      {user && data?.length === 0 && <span>no results</span>}
       {!user && <span>login required.</span>}
     </>
   );

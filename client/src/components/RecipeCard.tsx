@@ -2,7 +2,7 @@ import { FaHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import RecipeCommentForm from '../pages/RecipeCommentForm';
 import { Recipe1 } from '../pages/Ideas';
-import { readToken } from '../lib/data';
+import { readToken, readUser } from '../lib/data';
 import { useEffect, useState } from 'react';
 import { useUser } from './useUser';
 type Props = {
@@ -10,21 +10,16 @@ type Props = {
   recipe: Recipe1;
   handleCommentPost: (message, recipeId) => void;
 };
+
 function RecipeCard({ details, recipe, handleCommentPost }: Props) {
   const [isLikes, setIsLikes] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState(0);
   const { user } = useUser();
-  const {
-    recipeId,
-    userId,
-    username,
-    title,
-    imageUrl,
-    preparationTime,
-    cuisine,
-  } = recipe;
+  const { recipeId, username, title, imageUrl, preparationTime, cuisine } =
+    recipe;
   const navigate = useNavigate();
   const favorite = { color: 'red' };
+
   useEffect(() => {
     async function fetchIsLikes() {
       const req = {
@@ -33,7 +28,10 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
           'Content-Type': 'application/json',
         },
       };
-      const response = await fetch(`/api/likes/${userId}/${recipeId}`, req);
+      const response = await fetch(
+        `/api/likes/${readUser()?.userId}/${recipeId}`,
+        req
+      );
       if (!response.ok) throw new Error('Network response not ok.');
       const data = await response.json();
       if (data === 'dislike') {
@@ -42,6 +40,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
         setIsLikes(true);
       }
     }
+
     async function fetchLikesCount() {
       try {
         if (!recipeId) throw new Error('recipeId required.');
@@ -51,46 +50,46 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
         if (!count) return setLikesCount(0);
         setLikesCount(count);
       } catch (error) {
-        console.log(error);
         throw new Error('fetch likes count failed');
       }
     }
-    if (user) {
+
+    if (readUser()) {
       fetchIsLikes();
     }
-
     fetchLikesCount();
   }, [isLikes, likesCount]);
 
-  function handleClick() {
+  function handleDetailsClick() {
     navigate('/details', { state: recipe });
   }
 
-  async function handleFaClickData(recipeId: string, userId: string) {
-    if (user) {
-      try {
-        const req = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${readToken()}`,
-          },
-          body: JSON.stringify({ recipeId, userId }),
-        };
-        const response = await fetch('/api/likes', req);
-        if (!response.ok) throw new Error('Network response not ok.');
-        const data = await response.json();
-        if (data === 'inserted') {
-          setIsLikes(true);
-        } else {
-          setIsLikes(false);
-        }
-      } catch (error) {
-        console.error(error);
-        throw new Error('faHeart clicks failed.');
-      }
-    } else {
+  async function handleFaClickData(recipeId: string, userId: number) {
+    if (!user) {
       alert('login required');
+      return;
+    }
+
+    try {
+      const req = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${readToken()}`,
+        },
+        body: JSON.stringify({ recipeId, userId }),
+      };
+      const response = await fetch('/api/likes', req);
+      if (!response.ok) throw new Error('Network response not ok.');
+      const data = await response.json();
+      if (data === 'inserted') {
+        setIsLikes(true);
+      } else {
+        setIsLikes(false);
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('faHeart clicks failed.');
     }
   }
 
@@ -98,7 +97,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
     setIsLikes(!isLikes);
   }
 
-  function handleFaClick(recipeId: string, userId: string | undefined) {
+  function handleFaClick(recipeId: string, userId: number | undefined) {
     if (user) {
       handleFaClickStyle();
       if (!userId) throw new Error('userId is undefined.');
@@ -122,7 +121,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
               src={`http://localhost:8080/${imageUrl}`}
               alt="sushi"
               className="h-full w-full object-cover"
-              onClick={handleClick}
+              onClick={handleDetailsClick}
             />
           </div>
           <div className="w-3/5 flex flex-col gap-y-5 ">
@@ -132,9 +131,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
               <span className="block">{cuisine}</span>
               <span
                 className="block w-fit"
-                onClick={() =>
-                  handleFaClick(recipeId, user?.userId.toString())
-                }>
+                onClick={() => handleFaClick(recipeId, readUser()?.userId)}>
                 {isLikes ? (
                   <FaHeart style={favorite} className="inline" />
                 ) : (
@@ -145,7 +142,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
 
               <span
                 className="block bg-blue-300 w-12 rounded"
-                onClick={handleClick}>
+                onClick={handleDetailsClick}>
                 More
               </span>
               <RecipeCommentForm

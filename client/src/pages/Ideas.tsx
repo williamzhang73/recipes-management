@@ -15,13 +15,14 @@ type Props = {
 function Ideas({ handleCommentPost, error, setError }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<Recipe1[]>();
+
   useEffect(() => {
     async function fetchData() {
       try {
         const response = await fetch('/api/ideas');
         if (!response.ok) throw new Error('Network response not ok.');
-        const data = await response.json();
-        setData(data);
+        const responseData = await response.json();
+        setData(responseData);
       } catch (error) {
         console.error(error);
         setError(error);
