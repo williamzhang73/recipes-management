@@ -18,9 +18,9 @@ export default function App() {
   const [token, setToken] = useState<string>();
   const [error, setError] = useState<unknown>();
   useEffect(() => {
-    const userSession = readUser();
-    if (userSession !== null) {
-      setUser(userSession);
+    const userLocal = readUser();
+    if (userLocal !== null) {
+      setUser(userLocal);
     }
   }, []);
 
@@ -39,21 +39,21 @@ export default function App() {
   }
 
   async function handleCommentPost(message: string, recipeId: string) {
-    if (user) {
+    if (!user) {
+      alert('login required.');
+      return;
+    }
+    try {
       const messageObject = {
         userId: user.userId,
         message,
         recipeId,
       };
-      try {
-        await insertComment(messageObject);
-        alert('message posted.');
-      } catch (error) {
-        console.error(error);
-        setError(error);
-      }
-    } else {
-      alert('login required.');
+      await insertComment(messageObject);
+      alert('message posted.');
+    } catch (error) {
+      console.error(error);
+      setError(error);
     }
   }
 

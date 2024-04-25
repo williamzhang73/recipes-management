@@ -2,32 +2,33 @@ import { User } from '../components/UserContext';
 import { PostComment, Comment } from '../pages/Details';
 
 export const tokenKey = 'um.token';
+
 export function saveToken(token: string | undefined): void {
   if (token) {
-    sessionStorage.setItem(tokenKey, token);
+    localStorage.setItem(tokenKey, token);
   } else {
-    sessionStorage.removeItem(tokenKey);
+    localStorage.removeItem(tokenKey);
   }
 }
 
 export function readToken(): string {
-  const token = sessionStorage.getItem(tokenKey);
+  const token = localStorage.getItem(tokenKey);
   if (!token) throw new Error('No token found');
   return token;
 }
 
 export function saveUser(user: User | undefined): void {
   if (user) {
-    sessionStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
   } else {
-    sessionStorage.removeItem('user');
+    localStorage.removeItem('user');
   }
 }
 
 export function readUser(): User | null {
-  const userSession = sessionStorage.getItem('user');
-  if (!userSession) return null;
-  const user = JSON.parse(userSession) as User;
+  const userLocal = localStorage.getItem('user');
+  if (!userLocal) return null;
+  const user = JSON.parse(userLocal) as User;
   return user;
 }
 
