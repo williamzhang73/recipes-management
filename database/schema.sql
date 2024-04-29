@@ -54,3 +54,5 @@ ALTER TABLE "recipes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
 ALTER TABLE "comments" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
 
 ALTER TABLE "comments" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId");
+
+ALTER TABLE "users" ADD CONSTRAINT unique_username UNIQUE ("username");

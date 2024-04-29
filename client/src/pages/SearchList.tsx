@@ -9,6 +9,7 @@ type Props = {
 function SearchList({ handleCommentPost }: Props) {
   const location = useLocation();
   const results = location.state as Recipe1[];
+
   if (results.length === 0) return <div>no results.</div>;
   return (
     <ul className="flex flex-wrap w-full p-3 gap-y-3 flex-col md:h-fit md:border-l-2 md:border-white md:w-4/5 md:flex-row">

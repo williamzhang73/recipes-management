@@ -2,6 +2,7 @@
 
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../components/useUser';
+import { validateSignIn } from '../lib/data';
 
 function SignInForm() {
   const { handleSignIn } = useUser();
@@ -10,20 +11,7 @@ function SignInForm() {
     e.preventDefault();
     try {
       const formData = new FormData(e.currentTarget);
-      const formObject = Object.fromEntries(formData);
-      const req = {
-        method: 'post',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify(formObject),
-      };
-      const response = await fetch('/api/auth/sign-in', req);
-      if (!response.ok) {
-        alert(`username or password doesn't match.`);
-        throw new Error('Network response not ok.');
-      }
-      const data = await response.json();
+      const data = await validateSignIn(formData);
       const { user, token } = data;
       handleSignIn(user, token);
       navigate('/');

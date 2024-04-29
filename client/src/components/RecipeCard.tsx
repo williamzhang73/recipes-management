@@ -1,17 +1,28 @@
 import { FaHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import RecipeCommentForm from '../pages/RecipeCommentForm';
+import RecipeCommentForm from './RecipeCommentForm';
 import { Recipe1 } from '../pages/Ideas';
-import { readToken, readUser } from '../lib/data';
+import {
+  insertOrDeleteLikes,
+  readUser,
+  searchIsLikes,
+  searchLikesCount,
+} from '../lib/data';
 import { useEffect, useState } from 'react';
 import { useUser } from './useUser';
 type Props = {
   details: boolean;
   recipe: Recipe1;
-  handleCommentPost: (message, recipeId) => void;
+  handleCommentPost: (message: string, recipeId: string) => void;
+  handleFavorite?: (inserted: boolean, recipeId: string) => void;
 };
 
-function RecipeCard({ details, recipe, handleCommentPost }: Props) {
+function RecipeCard({
+  details,
+  recipe,
+  handleCommentPost,
+  handleFavorite,
+}: Props) {
   const [isLikes, setIsLikes] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState(0);
   const { user } = useUser();
@@ -22,18 +33,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
 
   useEffect(() => {
     async function fetchIsLikes() {
-      const req = {
-        method: 'get',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-      const response = await fetch(
-        `/api/likes/${readUser()?.userId}/${recipeId}`,
-        req
-      );
-      if (!response.ok) throw new Error('Network response not ok.');
-      const data = await response.json();
+      const data = await searchIsLikes(readUser()?.userId, recipeId);
       if (data === 'dislike') {
         setIsLikes(false);
       } else {
@@ -43,9 +43,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
 
     async function fetchLikesCount() {
       try {
-        if (!recipeId) throw new Error('recipeId required.');
-        const response = await fetch(`/api/likes/${recipeId}`);
-        const data = await response.json();
+        const data = await searchLikesCount(recipeId);
         const count = data.count as number;
         if (!count) return setLikesCount(0);
         setLikesCount(count);
@@ -53,12 +51,11 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
         throw new Error('fetch likes count failed');
       }
     }
-
     if (readUser()) {
       fetchIsLikes();
     }
     fetchLikesCount();
-  }, [isLikes, likesCount]);
+  }, [isLikes, likesCount, recipeId]);
 
   function handleDetailsClick() {
     navigate('/details', { state: recipe });
@@ -71,21 +68,13 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
     }
 
     try {
-      const req = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${readToken()}`,
-        },
-        body: JSON.stringify({ recipeId, userId }),
-      };
-      const response = await fetch('/api/likes', req);
-      if (!response.ok) throw new Error('Network response not ok.');
-      const data = await response.json();
+      const data = await insertOrDeleteLikes(recipeId, userId);
       if (data === 'inserted') {
         setIsLikes(true);
+        handleFavorite?.(true, recipeId);
       } else {
         setIsLikes(false);
+        handleFavorite?.(false, recipeId);
       }
     } catch (error) {
       console.error(error);
@@ -106,6 +95,7 @@ function RecipeCard({ details, recipe, handleCommentPost }: Props) {
       alert('login required.');
     }
   }
+
   return (
     <>
       <div

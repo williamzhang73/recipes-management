@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import { Recipe } from './MyRecipes';
 import ScrollToTopButton from '../components/ScrollToTopButton';
+import { searchIdeas } from '../lib/data';
 export type Recipe1 = Recipe & {
   username: string;
 };
@@ -14,15 +15,14 @@ type Props = {
 
 function Ideas({ handleCommentPost, error, setError }: Props) {
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<Recipe1[]>();
+  const [data, setData] = useState<Recipe1[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch('/api/ideas');
-        if (!response.ok) throw new Error('Network response not ok.');
-        const responseData = await response.json();
+        const responseData = await searchIdeas();
         setData(responseData);
+        console.log('responseData: ', responseData);
       } catch (error) {
         console.error(error);
         setError(error);
@@ -31,7 +31,7 @@ function Ideas({ handleCommentPost, error, setError }: Props) {
       }
     }
     fetchData();
-  }, []);
+  }, [setError]);
 
   const mapped = data?.map((recipe) => (
     <li
@@ -46,6 +46,7 @@ function Ideas({ handleCommentPost, error, setError }: Props) {
   ));
   if (isLoading) return <div>loading....</div>;
   if (error) return <div>page load failed</div>;
+  if (data.length === 0) return <div>no results.</div>;
   return (
     <>
       <ul className="flex flex-wrap w-full p-3 gap-y-3 flex-col md:h-fit md:border-l-2 md:border-white md:w-4/5 md:flex-row">

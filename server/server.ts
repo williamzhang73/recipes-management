@@ -37,14 +37,9 @@ type Recipe = {
 const app = express();
 const tokenSecret = process.env.TOKEN_SECRET;
 if (!tokenSecret) throw new Error('TOKEN_SECRET not found in .env');
-/* console.log('tokensecret: ', tokenSecret); */
-// Create paths for static directories
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
 const uploadsStaticDir = new URL('public', import.meta.url).pathname;
-/* console.log('reactStaticDir: ', reactStaticDir);
-console.log('uploadsStaticDir: ', uploadsStaticDir); */
 app.use(express.static(reactStaticDir));
-// Static directory for file uploads server/public/
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
@@ -54,22 +49,27 @@ function validateUser(username: string, password: string): void {
 }
 
 app.post('/api/auth/sign-up', async (req, res, next) => {
+  const { username, password } = req.body;
   try {
-    const { username, password } = req.body;
     validateUser(username, password);
     const sql = `insert into "users" ("username", "hashedPwd") 
                 values ($1, $2) 
                 returning *; `;
     const hashedPwd = await argon2.hash(password);
-    console.log('hashed: ', hashedPwd);
     const results = await db.query(sql, [username, hashedPwd]);
     const [row] = results.rows;
     res.status(201).json(row);
   } catch (error) {
-    console.error('register error', error);
+    const subString = `Key (username)=(${username}) already exists`;
+    if (JSON.stringify(error).includes(subString)) {
+      res.json('duplicate username');
+      return;
+    }
+    console.error(error);
     next(error);
   }
 });
+
 app.post('/api/auth/sign-in', async (req, res, next) => {
   try {
     const { username, password } = req.body;

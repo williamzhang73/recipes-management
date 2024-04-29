@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { readToken } from '../lib/data';
+import { readUser, searchMyRecipes } from '../lib/data';
 import RecipeCard from '../components/RecipeCard';
 import { Recipe1 } from './Ideas';
 import ScrollToTopButton from '../components/ScrollToTopButton';
@@ -29,17 +29,10 @@ function MyRecipes({ handleCommentPost, error, setError }: Props) {
   const [data, setData] = useState<Recipe1[]>();
 
   useEffect(() => {
-    if (!user) return;
+    if (!readUser()) return;
     async function fetchData() {
       try {
-        const req = {
-          headers: {
-            authorization: `Bearer ${readToken()}`,
-          },
-        };
-        const response = await fetch('/api/myrecipes', req);
-        if (!response.ok) throw new Error('Network response not ok.');
-        const data = await response.json();
+        const data = await searchMyRecipes();
         setData(data);
       } catch (error) {
         console.error(error);
@@ -49,7 +42,7 @@ function MyRecipes({ handleCommentPost, error, setError }: Props) {
       }
     }
     fetchData();
-  }, []);
+  }, [setError]);
 
   const mapped = data?.map((recipe) => (
     <li

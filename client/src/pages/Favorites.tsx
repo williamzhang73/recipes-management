@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { readToken, readUser } from '../lib/data';
+import { readUser, searchFavorites } from '../lib/data';
 import RecipeCard from '../components/RecipeCard';
 import { Recipe1 } from './Ideas';
 import ScrollToTopButton from '../components/ScrollToTopButton';
@@ -26,22 +26,13 @@ type Props = {
 function Favorites({ handleCommentPost, error, setError }: Props) {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<Recipe1[]>();
+  const [data, setData] = useState<Recipe1[]>([]);
+
   useEffect(() => {
-    if (!user) return;
+    if (!readUser()) return;
     async function fetchData() {
       try {
-        const req = {
-          headers: {
-            authorization: `Bearer ${readToken()}`,
-          },
-        };
-        const response = await fetch(
-          `/api/fetchlikes/${readUser()?.userId}`,
-          req
-        );
-        if (!response.ok) throw new Error('Network response not ok.');
-        const data = await response.json();
+        const data = await searchFavorites(readUser()?.userId);
         setData(data);
       } catch (error) {
         console.error(error);
@@ -51,7 +42,15 @@ function Favorites({ handleCommentPost, error, setError }: Props) {
       }
     }
     fetchData();
-  }, []);
+  }, [setError]);
+
+  function handleFavorite(inserted: boolean, recipeId: string) {
+    if (inserted) return;
+    const filtered = data.filter((item) => {
+      return item.recipeId !== recipeId;
+    });
+    setData(filtered);
+  }
 
   const mapped = data?.map((recipe) => (
     <li
@@ -61,9 +60,11 @@ function Favorites({ handleCommentPost, error, setError }: Props) {
         details={true}
         recipe={recipe}
         handleCommentPost={handleCommentPost}
+        handleFavorite={handleFavorite}
       />
     </li>
   ));
+
   if (user && isLoading) return <div>loading....</div>;
   if (user && error) return <div>data load failed</div>;
   return (

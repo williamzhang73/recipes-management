@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { readToken } from '../lib/data';
+import { insertRecipe } from '../lib/data';
 import { useUser } from '../components/useUser';
 
 function RecipeForm() {
@@ -11,15 +11,7 @@ function RecipeForm() {
     if (user) {
       try {
         const formData = new FormData(e.currentTarget);
-        const req = {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${readToken()}`,
-          },
-          body: formData,
-        };
-        const response = await fetch('/api/addrecipe', req);
-        if (!response.ok) throw new Error('Network response not ok.');
+        insertRecipe(formData);
         navigate('/myrecipes');
       } catch (error) {
         console.error(error);

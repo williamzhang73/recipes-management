@@ -40,13 +40,13 @@ function SideBar({ sideBarList, handleSetList, listItem }: Props) {
       <div className="flex flex-col items-start lg:mt-10 lg:flex-row">
         <button
           onClick={handleSignInClick}
-          className="bg-blue-300 text-xs rounded h-5 w-12 text-gray-700 lg:mr-4">
+          className="mt-2 sm:mt-2 bg-blue-300 text-xs rounded h-5 w-12 text-gray-700 lg:mr-4">
           Sign In
         </button>
 
         <button
           onClick={handleSignUpClick}
-          className="bg-blue-300 text-xs rounded h-5 w-12 text-gray-700">
+          className="mt-2 sm:mt-2 bg-blue-300 text-xs rounded h-5 w-12 text-gray-700">
           Sign Up
         </button>
       </div>

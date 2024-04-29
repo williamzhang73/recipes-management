@@ -1,7 +1,6 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import Ideas from './pages/Ideas';
 import MyRecipes from './pages/MyRecipes';
 import Favorites from './pages/Favorites';
 import SignInForm from './pages/SignInForm';
@@ -12,6 +11,7 @@ import { User, UserProvider } from './components/UserContext';
 import { insertComment, readUser, saveToken, saveUser } from './lib/data';
 import { useEffect, useState } from 'react';
 import SearchList from './pages/SearchList';
+import Ideas from './pages/Ideas';
 
 export default function App() {
   const [user, setUser] = useState<User>();

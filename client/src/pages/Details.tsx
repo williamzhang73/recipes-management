@@ -6,8 +6,8 @@ import { useLocation } from 'react-router-dom';
 import { Recipe1 } from './Ideas';
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { insertComment } from '../lib/data';
-import LoadingPage from '../components/LoadingPage';
+import { insertComment, searchComments } from '../lib/data';
+import LoadingPage from './LoadingPage';
 export type PostComment = {
   userId: number;
   recipeId: string;
@@ -23,12 +23,11 @@ function Details() {
   const [error, setError] = useState<unknown>();
   const [commentsData, setCommentsData] = useState<Comment[]>([]);
   const recipe = useLocation().state as Recipe1;
+
   useEffect(() => {
     async function fetchComments() {
       try {
-        const response = await fetch(`/api/comments/${recipe.recipeId}`);
-        if (!response.ok) throw new Error('Network response not ok.');
-        const data = await response.json();
+        const data = await searchComments(recipe.recipeId);
         if (!data)
           throw new Error(`no values found for recipeId ${recipe.recipeId} `);
         setCommentsData(data);
@@ -41,7 +40,7 @@ function Details() {
       }
     }
     fetchComments();
-  }, []);
+  }, [recipe.recipeId]);
 
   const { user } = useUser();
   async function handleCommentPost(message: string, recipeId: string) {

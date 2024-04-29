@@ -22,7 +22,7 @@ function RecipeInstructionList({
     if (instructionRef.current) {
       instructionRef.current.innerHTML = sanitizedInstructions;
     }
-  }, []);
+  }, [sanitizedIngredients, sanitizedInstructions]);
 
   return (
     <>

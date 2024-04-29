@@ -11,6 +11,7 @@ export type AppContextValues = {
   handleSignIn: (user: User, token: string) => void;
   handleSignOut: () => void;
 };
+
 export const AppContext = createContext<AppContextValues>({
   user: undefined,
   token: undefined,
