@@ -115,7 +115,10 @@ function RecipeCard({
             />
           </div>
           <div className="w-3/5 flex flex-col gap-y-5 ">
-            <span className="block">{username}</span>
+            <div className="block">
+              <span>{username}</span> <span>send</span>
+            </div>
+
             <div className="flex flex-col gap-y-2 md:ml-8 ">
               <span className="block">{title}</span>
               <span className="block">{cuisine}</span>

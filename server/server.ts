@@ -80,7 +80,6 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     if (!row) throw new ClientError(404, 'user not found.');
     const pwdVerify = await argon2.verify(row.hashedPwd, password);
     if (pwdVerify) {
-      console.log('login in successfully');
       const user = {
         userId: row.userId,
         username,
@@ -88,7 +87,6 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
       const token = jwt.sign(user, tokenSecret);
       res.status(201).json({ user, token });
     } else {
-      console.log('password verify failed');
       throw new ClientError(400, 'password verify failed');
     }
   } catch (error) {
@@ -101,7 +99,6 @@ app.post('/api/comments', authMiddleware, async (req, res, next) => {
   try {
     const userId = req.user?.userId;
     const { message, recipeId } = req.body;
-    console.log(req.body.recipeId);
     if (!userId) throw new ClientError(400, 'userId required');
     if (!recipeId) throw new ClientError(400, 'recipeId required');
     if (!message) throw new ClientError(400, 'message required');
@@ -179,7 +176,6 @@ app.post(
 );
 
 app.post('/api/searchRecipe', async (req, res, next) => {
-  console.log('search recipe route handler');
   try {
     const { searchInput } = req.body;
     if (!searchInput)

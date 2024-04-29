@@ -22,7 +22,6 @@ function Ideas({ handleCommentPost, error, setError }: Props) {
       try {
         const responseData = await searchIdeas();
         setData(responseData);
-        console.log('responseData: ', responseData);
       } catch (error) {
         console.error(error);
         setError(error);

@@ -7,6 +7,7 @@ type Props = {
 
 function SideBar({ sideBarList, handleSetList, listItem }: Props) {
   const navigate = useNavigate();
+
   function handleClick(list: string) {
     list === 'Ideas' && navigate('/ideas');
     list === 'My Recipes' && navigate('/myrecipes');
