@@ -367,7 +367,7 @@ app.post('/api/sendemail', async (req, res, next) => {
       const dataSent = await sesClient.send(sendEmailCommand);
       return dataSent;
     } catch (e) {
-      console.error('Failed to send email.', e);
+      console.error(e);
       return e;
     }
   };
