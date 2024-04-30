@@ -3,6 +3,8 @@ import 'dotenv/config';
 import express from 'express';
 import pg from 'pg';
 import jwt from 'jsonwebtoken';
+import { SendEmailCommand } from '@aws-sdk/client-ses';
+import { sesClient } from './lib/ses_Client';
 import {
   ClientError,
   authMiddleware,
@@ -14,6 +16,7 @@ import { brotliDecompress } from 'node:zlib';
 import { uploadsMiddleware } from './lib/uploads-middleware.js';
 import { idText } from 'typescript';
 import { error } from 'node:console';
+import { title } from 'node:process';
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -305,6 +308,73 @@ app.get('/api/fetchlikes/:userId', authMiddleware, async (req, res, next) => {
     const rows = result.rows;
     if (!rows) throw new ClientError(404, 'userId not found.');
     res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.post('/api/sendemail', async (req, res, next) => {
+  const reqBody = req.body;
+  const toAddress = reqBody.objectData.toAddress;
+  const fromAddress = reqBody.objectData.fromAddress;
+  const emailTitle = reqBody.objectData.title;
+  const message = reqBody.objectData.message;
+  const recipe: Recipe = reqBody.recipe;
+  const createSendEmailCommand = (
+    toAddress: string,
+    fromAddress: string,
+    subject: string,
+    recipe: Recipe,
+    message: string
+  ): any => {
+    return new SendEmailCommand({
+      Destination: {
+        CcAddresses: [],
+        ToAddresses: [toAddress],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: `<div><div>${message}</div><br/><div>${recipe.ingredients}</div><br/>
+            <div>${recipe.instructions}</div></div>`,
+          },
+          Text: {
+            Charset: 'UTF-8',
+            Data: '',
+          },
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: subject,
+        },
+      },
+      Source: fromAddress,
+      ReplyToAddresses: [],
+    });
+  };
+
+  const run = async (): Promise<any> => {
+    const sendEmailCommand = createSendEmailCommand(
+      toAddress,
+      fromAddress,
+      emailTitle,
+      recipe,
+      message
+    );
+    try {
+      const dataSent = await sesClient.send(sendEmailCommand);
+      return dataSent;
+    } catch (e) {
+      console.error('Failed to send email.', e);
+      return e;
+    }
+  };
+
+  try {
+    run();
+    res.status(200).json('sent');
   } catch (error) {
     console.error(error);
     next(error);

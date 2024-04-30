@@ -12,6 +12,7 @@ import { insertComment, readUser, saveToken, saveUser } from './lib/data';
 import { useEffect, useState } from 'react';
 import SearchList from './pages/SearchList';
 import Ideas from './pages/Ideas';
+import { EmailSentForm } from './pages/EmailSentForm';
 
 export default function App() {
   const [user, setUser] = useState<User>();
@@ -112,6 +113,7 @@ export default function App() {
                 setError={setError}
               />
             }></Route>
+          <Route path="/email-sent-form" element={<EmailSentForm />}></Route>
         </Route>
       </Routes>
     </UserProvider>
