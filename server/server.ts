@@ -27,6 +27,7 @@ const db = new pg.Pool({
     rejectUnauthorized: false,
   },
 });
+
 type Recipe = {
   title: string;
   imageUrl: string;
@@ -37,6 +38,14 @@ type Recipe = {
   ingredients: string;
   instructions: string;
 };
+
+export type EmailSentForm = {
+  toAddress: string;
+  fromAddress: string;
+  title: string;
+  message: string;
+};
+
 const app = express();
 const tokenSecret = process.env.TOKEN_SECRET;
 if (!tokenSecret) throw new Error('TOKEN_SECRET not found in .env');
@@ -316,11 +325,21 @@ app.get('/api/fetchlikes/:userId', authMiddleware, async (req, res, next) => {
 
 app.post('/api/sendemail', async (req, res, next) => {
   const reqBody = req.body;
-  const toAddress = reqBody.objectData.toAddress;
-  const fromAddress = reqBody.objectData.fromAddress;
-  const emailTitle = reqBody.objectData.title;
-  const message = reqBody.objectData.message;
+  const objectData = reqBody.objectData as EmailSentForm;
+  const toAddress = objectData.toAddress;
+  const fromAddress = objectData.fromAddress;
+  const emailTitle = objectData.title;
+  const message = objectData.message;
+
+  if (!objectData) {
+    throw new ClientError(400, 'email form object can not be undefined.');
+  }
   const recipe: Recipe = reqBody.recipe;
+  if (!recipe) {
+    res.json('recipe undefined');
+    return;
+  }
+
   const createSendEmailCommand = (
     toAddress: string,
     fromAddress: string,

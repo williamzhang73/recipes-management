@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export function EmailSentForm() {
   const location = useLocation();
+  const navigate = useNavigate();
   const recipe = location.state;
   const [toAddress, setToAddress] = useState<string>('');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
@@ -26,8 +27,12 @@ export function EmailSentForm() {
       const response = await fetch('/api/sendemail', req);
       if (!response) throw new Error('Network response not ok');
       const data = await response.json();
+      if (data === 'recipe undefined') {
+        alert('recipe can not be undefined.');
+      }
       if (data === 'sent') {
         alert('email sent successfully.');
+        navigate('/ideas');
       }
     } catch (error) {
       console.error(error);
@@ -37,7 +42,6 @@ export function EmailSentForm() {
   function handleFormatCheck() {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
     const result = emailRegex.test(toAddress);
-    console.log('result: ', result);
     if (!result) {
       setIsValidEmail(false);
     } else {
