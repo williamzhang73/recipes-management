@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { readUser, searchMyRecipes } from '../lib/data';
+import { Recipe1, readUser, searchMyRecipes } from '../lib/data';
 import RecipeCard from '../components/RecipeCard';
-import { Recipe1 } from './Ideas';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 export type Recipe = {
   recipeId: string;

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Recipe1 } from './Ideas';
 import DOMPurify from 'dompurify';
+import { Recipe1 } from '../lib/data';
 
 type Props = {
   recipe: Recipe1;

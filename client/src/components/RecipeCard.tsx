@@ -1,9 +1,9 @@
 import { FaHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import RecipeCommentForm from './RecipeCommentForm';
-import { Recipe1 } from '../pages/Ideas';
 import { AiOutlineMail } from 'react-icons/ai';
 import {
+  Recipe1,
   insertOrDeleteLikes,
   readUser,
   searchIsLikes,
@@ -120,7 +120,7 @@ function RecipeCard({
             />
           </div>
           <div className="w-3/5 flex flex-col gap-y-5 ">
-            <div className="block flex justify-between">
+            <div className="flex justify-between">
               <span>{username}</span>
               <span onClick={handleEmailClick}>
                 <AiOutlineMail />
