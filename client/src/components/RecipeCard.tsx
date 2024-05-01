@@ -2,6 +2,7 @@ import { FaHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import RecipeCommentForm from './RecipeCommentForm';
 import { Recipe1 } from '../pages/Ideas';
+import { AiOutlineMail } from 'react-icons/ai';
 import {
   insertOrDeleteLikes,
   readUser,
@@ -96,6 +97,10 @@ function RecipeCard({
     }
   }
 
+  function handleEmailClick() {
+    navigate('/email-sent-form', { state: recipe });
+  }
+
   return (
     <>
       <div
@@ -115,7 +120,13 @@ function RecipeCard({
             />
           </div>
           <div className="w-3/5 flex flex-col gap-y-5 ">
-            <span className="block">{username}</span>
+            <div className="block flex justify-between">
+              <span>{username}</span>
+              <span onClick={handleEmailClick}>
+                <AiOutlineMail />
+              </span>
+            </div>
+
             <div className="flex flex-col gap-y-2 md:ml-8 ">
               <span className="block">{title}</span>
               <span className="block">{cuisine}</span>

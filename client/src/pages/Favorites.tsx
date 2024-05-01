@@ -1,22 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { readUser, searchFavorites } from '../lib/data';
+import { Recipe1, readUser, searchFavorites } from '../lib/data';
 import RecipeCard from '../components/RecipeCard';
-import { Recipe1 } from './Ideas';
 import ScrollToTopButton from '../components/ScrollToTopButton';
-export type Recipe = {
-  recipeId: string;
-  title: string;
-  userId: string;
-  imageUrl: string;
-  preparationTime: string;
-  cuisine: string;
-  glutenFree: boolean;
-  vegetarian: boolean;
-  ingredients: string;
-  instructions: string;
-  createdAt: string;
-};
 
 type Props = {
   handleCommentPost: (recipeId: string, message: string) => void;

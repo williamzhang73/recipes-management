@@ -3,6 +3,8 @@ import 'dotenv/config';
 import express from 'express';
 import pg from 'pg';
 import jwt from 'jsonwebtoken';
+import { SendEmailCommand } from '@aws-sdk/client-ses';
+import { sesClient } from './lib/ses_Client';
 import {
   ClientError,
   authMiddleware,
@@ -14,6 +16,7 @@ import { brotliDecompress } from 'node:zlib';
 import { uploadsMiddleware } from './lib/uploads-middleware.js';
 import { idText } from 'typescript';
 import { error } from 'node:console';
+import { title } from 'node:process';
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -24,6 +27,7 @@ const db = new pg.Pool({
     rejectUnauthorized: false,
   },
 });
+
 type Recipe = {
   title: string;
   imageUrl: string;
@@ -34,6 +38,14 @@ type Recipe = {
   ingredients: string;
   instructions: string;
 };
+
+export type EmailSentForm = {
+  toAddress: string;
+  fromAddress: string;
+  title: string;
+  message: string;
+};
+
 const app = express();
 const tokenSecret = process.env.TOKEN_SECRET;
 if (!tokenSecret) throw new Error('TOKEN_SECRET not found in .env');
@@ -80,7 +92,6 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     if (!row) throw new ClientError(404, 'user not found.');
     const pwdVerify = await argon2.verify(row.hashedPwd, password);
     if (pwdVerify) {
-      console.log('login in successfully');
       const user = {
         userId: row.userId,
         username,
@@ -88,7 +99,6 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
       const token = jwt.sign(user, tokenSecret);
       res.status(201).json({ user, token });
     } else {
-      console.log('password verify failed');
       throw new ClientError(400, 'password verify failed');
     }
   } catch (error) {
@@ -101,7 +111,6 @@ app.post('/api/comments', authMiddleware, async (req, res, next) => {
   try {
     const userId = req.user?.userId;
     const { message, recipeId } = req.body;
-    console.log(req.body.recipeId);
     if (!userId) throw new ClientError(400, 'userId required');
     if (!recipeId) throw new ClientError(400, 'recipeId required');
     if (!message) throw new ClientError(400, 'message required');
@@ -179,7 +188,6 @@ app.post(
 );
 
 app.post('/api/searchRecipe', async (req, res, next) => {
-  console.log('search recipe route handler');
   try {
     const { searchInput } = req.body;
     if (!searchInput)
@@ -309,6 +317,83 @@ app.get('/api/fetchlikes/:userId', authMiddleware, async (req, res, next) => {
     const rows = result.rows;
     if (!rows) throw new ClientError(404, 'userId not found.');
     res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.post('/api/sendemail', async (req, res, next) => {
+  const reqBody = req.body;
+  const objectData = reqBody.objectData as EmailSentForm;
+  const toAddress = objectData.toAddress;
+  const fromAddress = objectData.fromAddress;
+  const emailTitle = objectData.title;
+  const message = objectData.message;
+
+  if (!objectData) {
+    throw new ClientError(400, 'email form object can not be undefined.');
+  }
+  const recipe: Recipe = reqBody.recipe;
+  if (!recipe) {
+    res.json('recipe undefined');
+    return;
+  }
+
+  const createSendEmailCommand = (
+    toAddress: string,
+    fromAddress: string,
+    subject: string,
+    recipe: Recipe,
+    message: string
+  ): any => {
+    return new SendEmailCommand({
+      Destination: {
+        CcAddresses: [],
+        ToAddresses: [toAddress],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: `<div><div>${message}</div><br/><div>${recipe.ingredients}</div><br/>
+            <div>${recipe.instructions}</div></div>`,
+          },
+          Text: {
+            Charset: 'UTF-8',
+            Data: '',
+          },
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: subject,
+        },
+      },
+      Source: fromAddress,
+      ReplyToAddresses: [],
+    });
+  };
+
+  const run = async (): Promise<any> => {
+    const sendEmailCommand = createSendEmailCommand(
+      toAddress,
+      fromAddress,
+      emailTitle,
+      recipe,
+      message
+    );
+    try {
+      const dataSent = await sesClient.send(sendEmailCommand);
+      return dataSent;
+    } catch (e) {
+      console.error(e);
+      return e;
+    }
+  };
+
+  try {
+    run();
+    res.status(200).json('sent');
   } catch (error) {
     console.error(error);
     next(error);

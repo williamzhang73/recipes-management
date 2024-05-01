@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import RecipeCard from '../components/RecipeCard';
-import { Recipe } from './MyRecipes';
 import ScrollToTopButton from '../components/ScrollToTopButton';
-import { searchIdeas } from '../lib/data';
-export type Recipe1 = Recipe & {
-  username: string;
-};
+import { Recipe1, searchIdeas } from '../lib/data';
 
 type Props = {
   handleCommentPost: (recipeId: string, message: string) => void;
@@ -22,7 +18,6 @@ function Ideas({ handleCommentPost, error, setError }: Props) {
       try {
         const responseData = await searchIdeas();
         setData(responseData);
-        console.log('responseData: ', responseData);
       } catch (error) {
         console.error(error);
         setError(error);
@@ -44,6 +39,7 @@ function Ideas({ handleCommentPost, error, setError }: Props) {
       />
     </li>
   ));
+
   if (isLoading) return <div>loading....</div>;
   if (error) return <div>page load failed</div>;
   if (data.length === 0) return <div>no results.</div>;

@@ -7,7 +7,9 @@ function Header() {
   const navigate = useNavigate();
   const sideBarList = ['Ideas', 'My Recipes', 'Favorites', 'Add Recipe'];
   const [listItem, setListItem] = useState('');
+
   async function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
+    handleSetList('');
     e.preventDefault();
     try {
       const formData = new FormData(e.currentTarget);
@@ -32,6 +34,7 @@ function Header() {
   function handleSetList(list: string) {
     setListItem(list);
   }
+
   return (
     <>
       <div className="border-b-2 border-white w-full flex flex-col justify-center items-center md:flex-row md:h-14 md:justify-between">
