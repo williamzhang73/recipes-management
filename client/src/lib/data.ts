@@ -3,6 +3,24 @@ import { PostComment, Comment } from '../pages/Details';
 
 export const tokenKey = 'um.token';
 
+export type Recipe = {
+  recipeId: string;
+  title: string;
+  userId: string;
+  imageUrl: string;
+  preparationTime: string;
+  cuisine: string;
+  glutenFree: boolean;
+  vegetarian: boolean;
+  ingredients: string;
+  instructions: string;
+  createdAt: string;
+};
+
+export type Recipe1 = Recipe & {
+  username: string;
+};
+
 export function saveToken(token: string | undefined): void {
   if (token) {
     localStorage.setItem(tokenKey, token);

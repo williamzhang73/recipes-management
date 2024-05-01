@@ -3,10 +3,9 @@ import RecipeInstructionList from './RecipeInstructionList';
 import CommentsList from './CommentsList';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import { useLocation } from 'react-router-dom';
-import { Recipe1 } from './Ideas';
 import { useEffect, useState } from 'react';
 import { useUser } from '../components/useUser';
-import { insertComment, searchComments } from '../lib/data';
+import { Recipe1, insertComment, searchComments } from '../lib/data';
 import LoadingPage from './LoadingPage';
 export type PostComment = {
   userId: number;

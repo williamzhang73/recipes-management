@@ -3,10 +3,14 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../components/useUser';
 import { validateSignIn } from '../lib/data';
+import { IoEyeSharp } from 'react-icons/io5';
+import { useState } from 'react';
+import { FaRegEyeSlash } from 'react-icons/fa6';
 
 function SignInForm() {
   const { handleSignIn } = useUser();
   const navigate = useNavigate();
+  const [pwdInputType, setPwdInputType] = useState<string>('password');
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
@@ -18,6 +22,14 @@ function SignInForm() {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  function handlePwdInput() {
+    if (pwdInputType === 'password') {
+      setPwdInputType('text');
+      return;
+    }
+    setPwdInputType('password');
   }
 
   return (
@@ -34,13 +46,21 @@ function SignInForm() {
             name="username"
           />
         </div>
-        <div>
+        <div className="flex items-center relative">
           <input
-            type="password"
+            type={pwdInputType}
             placeholder="Password"
-            className="border-2 rounded cursor-pointer"
+            className="cursor-pointer border-2 rounded "
             name="password"
           />
+          {pwdInputType === 'password' ? (
+            <IoEyeSharp className="absolute right-0" onClick={handlePwdInput} />
+          ) : (
+            <FaRegEyeSlash
+              className="absolute right-0"
+              onClick={handlePwdInput}
+            />
+          )}
         </div>
         <div className="flex flex-col items-center">
           <button className="bg-blue-300 text-xs rounded h-7 w-12 text-gray-700">
@@ -57,4 +77,5 @@ function SignInForm() {
     </div>
   );
 }
+
 export default SignInForm;
