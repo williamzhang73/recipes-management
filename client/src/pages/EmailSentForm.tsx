@@ -25,7 +25,7 @@ export function EmailSentForm() {
         body: JSON.stringify(body),
       };
       const response = await fetch('/api/sendemail', req);
-      if (!response) throw new Error('Network response not ok');
+      if (!response.ok) throw new Error('Network response not ok');
       const data = await response.json();
       if (data === 'recipe undefined') {
         alert('recipe can not be undefined.');
@@ -35,6 +35,7 @@ export function EmailSentForm() {
         navigate('/ideas');
       }
     } catch (error) {
+      alert('error sending email');
       console.error(error);
     }
   }
