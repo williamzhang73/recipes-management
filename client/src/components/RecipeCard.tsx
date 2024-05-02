@@ -113,7 +113,7 @@ function RecipeCard({
           } rounded-lg flex overflow-hidden text-gray-700 relative shadow `}>
           <div className="w-2/5">
             <img
-              src={`http://localhost:8080/${imageUrl}`}
+              src={`http://recipes-management-dev.us-west-1.elasticbeanstalk.com/${imageUrl}`}
               alt="sushi"
               className="h-full w-full object-cover"
               onClick={handleDetailsClick}

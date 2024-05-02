@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { insertRecipe } from '../lib/data';
 import { useUser } from '../components/useUser';
@@ -6,13 +6,15 @@ import { useUser } from '../components/useUser';
 function RecipeForm() {
   const navigate = useNavigate();
   const { user } = useUser();
+  const formRef = useRef<HTMLFormElement>(null);
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (user) {
       try {
         const formData = new FormData(e.currentTarget);
         insertRecipe(formData);
-        navigate('/myrecipes');
+        alert('recipe post successfully');
+        formRef.current?.reset();
       } catch (error) {
         console.error(error);
         throw new Error('recipe submitted failed');
@@ -25,6 +27,7 @@ function RecipeForm() {
   return (
     <div className="w-full border-l-2 border-white pt-8 flex justify-center md:w-4/5">
       <form
+        ref={formRef}
         onSubmit={handleSubmit}
         className="flex flex-col justify-center border-2 rounded-lg gap-y-3 text-gray-700 items-center w-full mx-4 px-4 bg-white h-fit py-10 md:w-4/5 md:mx-0 lg:px-20">
         <span className="block font-bold">Recipe Form</span>
