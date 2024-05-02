@@ -374,7 +374,7 @@ app.post('/api/sendemail', async (req, res, next) => {
     });
   };
 
-  const run = async (): Promise<any> => {
+  try {
     const sendEmailCommand = createSendEmailCommand(
       toAddress,
       fromAddress,
@@ -382,17 +382,7 @@ app.post('/api/sendemail', async (req, res, next) => {
       recipe,
       message
     );
-    try {
-      const dataSent = await sesClient.send(sendEmailCommand);
-      return dataSent;
-    } catch (e) {
-      console.error(e);
-      return e;
-    }
-  };
-
-  try {
-    run();
+    const dataSent = await sesClient.send(sendEmailCommand);
     res.status(200).json('sent');
   } catch (error) {
     console.error(error);
