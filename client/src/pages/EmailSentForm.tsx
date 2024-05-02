@@ -59,8 +59,9 @@ export function EmailSentForm() {
           <span>From</span>
           <span className="w-3/4 md:w-48">willzhang73@gmail.com</span>
         </label>
-        <label>
-          <div className="flex justify-between">
+
+        <div className="flex justify-between">
+          <label>
             <span>To</span>
             <input
               name="toAddress"
@@ -72,14 +73,14 @@ export function EmailSentForm() {
               onBlur={handleFormatCheck}
               placeholder="recipient"
               required></input>
+          </label>
+        </div>
+        {!isValidEmail && (
+          <div className="flex justify-between">
+            <span></span>
+            <span className="text-red-400">not valid email.</span>
           </div>
-          {!isValidEmail && (
-            <div className="flex justify-between">
-              <span></span>
-              <span className="text-red-400">not valid email.</span>
-            </div>
-          )}
-        </label>
+        )}
 
         <label className="flex justify-between">
           <span>Title</span>
