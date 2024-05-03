@@ -6,10 +6,10 @@ function CommentsList({ comment }: Props) {
   return (
     <div className="bg-white h-auto rounded-lg text-gray-700 mb-8">
       <div className="flex justify-between">
-        <span className="font-bold text-xs">{comment.username}</span>
-        <span className="font-bold text-xs">{comment.createdAt}</span>
+        <span className="font-bold text-xs ml-3">{comment.username}</span>
+        <span className="font-bold text-xs mr-3">{comment.createdAt}</span>
       </div>
-      <span className="block pl-20">{comment.message}</span>
+      <span className="block ml-3">{comment.message}</span>
     </div>
   );
 }
