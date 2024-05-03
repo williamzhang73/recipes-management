@@ -58,11 +58,11 @@ export function EmailSentForm() {
         <span className="block text-center text-lg">Email Sent Form</span>
         <label className="flex justify-between">
           <span>From</span>
-          <span className="w-3/4 md:w-48">willzhang73@gmail.com</span>
+          <span className="w-3/4 md:w-48">Willzhang73@gmail.com</span>
         </label>
 
-        <div className="flex justify-between">
-          <label>
+        <div>
+          <label className="flex justify-between">
             <span>To</span>
             <input
               name="toAddress"

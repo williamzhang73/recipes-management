@@ -33,7 +33,7 @@ function RecipeForm() {
         <span className="block font-bold">Recipe Form</span>
         <div className="flex flex-col w-full gap-y-2">
           <label className="flex justify-between">
-            <span className="font-semibold">title</span>
+            <span className="font-semibold">Title</span>
             <input
               type="text"
               name="title"
@@ -44,7 +44,7 @@ function RecipeForm() {
           </label>
 
           <label className="flex justify-between">
-            <span className="font-semibold">image</span>
+            <span className="font-semibold">Image</span>
             <input
               className="w-3/5 text-xs md:w-40 "
               required
@@ -55,7 +55,7 @@ function RecipeForm() {
           </label>
 
           <div className="flex justify-between">
-            <span className="font-semibold">preparation time</span>
+            <span className="font-semibold">Preparation Time</span>
             <select
               name="preparationTime"
               required
@@ -74,7 +74,7 @@ function RecipeForm() {
           </div>
 
           <div className="flex justify-between">
-            <span className="font-semibold">cuisine</span>
+            <span className="font-semibold">Cuisine</span>
             <select
               name="cuisine"
               required
@@ -100,7 +100,7 @@ function RecipeForm() {
                 name="glutenFree"
                 className="mr-2"
               />
-              <span className="font-semibold">gluten free</span>
+              <span className="font-semibold">Gluten Free</span>
             </label>
             <label>
               <input
@@ -109,17 +109,17 @@ function RecipeForm() {
                 name="vegetarian"
                 className="mr-2"
               />
-              <span className="font-semibold">vegetarian</span>
+              <span className="font-semibold">Vegetarian</span>
             </label>
           </div>
           <div className="flex flex-wrap justify-between">
-            <span className="block w-full font-semibold">ingredients</span>
+            <span className="block w-full font-semibold">Ingredients</span>
             <textarea
               className="block border-2 rounded w-full h-32"
               name="ingredients"></textarea>
           </div>
           <div className="flex flex-wrap justify-between">
-            <span className="font-semibold">instructions</span>
+            <span className="font-semibold">Instructions</span>
             <textarea
               className="border-2 rounded w-full h-32"
               name="instructions"></textarea>

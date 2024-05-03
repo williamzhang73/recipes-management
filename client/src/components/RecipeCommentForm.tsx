@@ -15,7 +15,7 @@ function RecipeCommentForm({ handleCommentPost, recipeId }: Props) {
       <textarea
         className="border-2 rounded border-gray-400 w-11/12"
         name="message"
-        placeholder="comment"
+        placeholder="Comment"
         value={message}
         onChange={(e) => {
           setMessage(e.target.value);

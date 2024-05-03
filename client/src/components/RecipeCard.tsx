@@ -122,8 +122,11 @@ function RecipeCard({
           <div className="w-3/5 flex flex-col gap-y-5 ">
             <div className="flex justify-between">
               <span>{username}</span>
-              <span onClick={handleEmailClick}>
+              <span
+                onClick={handleEmailClick}
+                className="flex items-center gap-x-1">
                 <AiOutlineMail />
+                <span className="mr-2">Share</span>
               </span>
             </div>
 
@@ -138,13 +141,14 @@ function RecipeCard({
                 ) : (
                   <FaHeart className="inline" />
                 )}
-                {likesCount} likes
+                <span className="ml-2">{likesCount}</span>
+                <span> likes</span>
               </span>
 
               <span
-                className="block bg-blue-300 w-12 rounded"
+                className="block bg-blue-300 w-fit rounded"
                 onClick={handleDetailsClick}>
-                More
+                View More
               </span>
               <RecipeCommentForm
                 handleCommentPost={handleCommentPost}

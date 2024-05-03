@@ -47,7 +47,7 @@ function Header() {
           <form onSubmit={handleSearchSubmit}>
             <input
               type="text"
-              placeholder="search..."
+              placeholder="Search"
               className="rounded border-2 border-gray-300"
               name="searchInput"
               required
@@ -59,7 +59,7 @@ function Header() {
         </span>
         {user ? (
           <div className="flex gap-x-4 items-center md:flex md:flex-col md:items-center">
-            <span>welcome, {user.username}</span>
+            <span>Welcome, {user.username}</span>
             <span
               className="text-xs text-gray-700"
               onClick={() => {

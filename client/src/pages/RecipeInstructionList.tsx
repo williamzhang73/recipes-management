@@ -28,10 +28,10 @@ function RecipeInstructionList({
     <>
       <div className="bg-white w-full h-auto rounded-lg text-gray-700 md:w-4/5  lg:w-11/12">
         <div>
-          <span className="block font-medium py-5">ingredients</span>
-          <span className="block" ref={ingredientRef}></span>
-          <span className="block font-medium py-5">instructions</span>
-          <span className="block" ref={instructionRef}></span>
+          <span className="block font-medium py-5 mx-3">Ingredients</span>
+          <span className="block mx-3" ref={ingredientRef}></span>
+          <span className="block font-medium py-5 mx-3">Instructions</span>
+          <span className="block mx-3" ref={instructionRef}></span>
         </div>
       </div>
     </>
