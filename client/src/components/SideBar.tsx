@@ -27,7 +27,7 @@ function SideBar({ sideBarList, handleSetList, listItem }: Props) {
   }
 
   return (
-    <div className="h-fit w-full md:w-1/5 lg:h-screen">
+    <div className="px-5 h-fit w-full md:w-1/5 lg:h-screen">
       <ul className="flex flex-col gap-y-4 text-gray-700 w-fit">
         {sideBarList.map((list) => (
           <li
@@ -38,16 +38,16 @@ function SideBar({ sideBarList, handleSetList, listItem }: Props) {
           </li>
         ))}
       </ul>
-      <div className="flex flex-col items-start lg:mt-10 lg:flex-row">
+      <div className="flex flex-col items-start lg:mt-10 lg:flex-row lg:gap-x-2">
         <button
           onClick={handleSignInClick}
-          className="mt-2 sm:mt-2 bg-blue-300 text-xs rounded h-5 w-12 text-gray-700 lg:mr-4">
+          className="mt-2  bg-blue-300 text-xs rounded h-5 w-fit text-gray-700 ">
           Sign In
         </button>
 
         <button
           onClick={handleSignUpClick}
-          className="mt-2 sm:mt-2 bg-blue-300 text-xs rounded h-5 w-12 text-gray-700">
+          className="mt-2  bg-blue-300 text-xs rounded h-5 w-fit text-gray-700">
           Sign Up
         </button>
       </div>

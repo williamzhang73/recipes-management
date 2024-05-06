@@ -31,7 +31,7 @@ function PasswordReset() {
     }
   }
   return (
-    <div className="w-full md:w-4/5">
+    <div className="px-5 w-full md:w-4/5">
       <form
         onSubmit={handleSubmit}
         className="w-full border-2 border-white rounded bg-white mt-6 px-4 h-60 flex flex-col gap-y-3">
