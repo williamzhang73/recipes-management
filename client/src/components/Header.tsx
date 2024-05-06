@@ -64,6 +64,7 @@ function Header() {
               className="text-xs text-gray-700"
               onClick={() => {
                 handleSignOut();
+                navigate('/sign-in');
               }}>
               Sign out
             </span>

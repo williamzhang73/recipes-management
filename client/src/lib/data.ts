@@ -130,13 +130,13 @@ export async function validateSignIn(formData: FormData) {
 }
 
 export async function register(formData: FormData) {
-  const ObjectData = Object.fromEntries(formData);
+  const objectData = Object.fromEntries(formData);
   const req = {
     method: 'post',
     headers: {
       'content-type': 'application/json',
     },
-    body: JSON.stringify(ObjectData),
+    body: JSON.stringify(objectData),
   };
   const response = await fetch('/api/auth/sign-up', req);
   if (!response.ok) {

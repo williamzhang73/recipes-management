@@ -72,6 +72,9 @@ function SignInForm() {
               <span className="text-blue-500">Sign up</span>
             </Link>
           </span>
+          <Link to="/passwordassistance">
+            <span className="text-xs text-blue-500">Forget your password?</span>
+          </Link>
         </div>
       </form>
     </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { handleValidateEmailFormat } from '../lib/utility';
 
 export function EmailSentForm() {
   const location = useLocation();
@@ -40,16 +41,6 @@ export function EmailSentForm() {
     }
   }
 
-  function handleFormatCheck() {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
-    const result = emailRegex.test(toAddress);
-    if (!result) {
-      setIsValidEmail(false);
-    } else {
-      setIsValidEmail(true);
-    }
-  }
-
   return (
     <div className="w-full flex justify-center md:border-l-2 md:border-white md:w-4/5">
       <form
@@ -71,7 +62,9 @@ export function EmailSentForm() {
               onChange={(e) => {
                 setToAddress(e.target.value);
               }}
-              onBlur={handleFormatCheck}
+              onBlur={() =>
+                setIsValidEmail(handleValidateEmailFormat(toAddress))
+              }
               placeholder="recipient"
               required></input>
           </label>
