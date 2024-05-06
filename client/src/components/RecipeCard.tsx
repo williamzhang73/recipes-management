@@ -98,7 +98,7 @@ function RecipeCard({
   }
 
   function handleEmailClick() {
-    navigate('/email-sent-form', { state: recipe });
+    navigate('/emailsentform', { state: recipe });
   }
 
   return (

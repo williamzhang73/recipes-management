@@ -17,7 +17,10 @@ CREATE TABLE "public"."users" (
   "userId" serial,
   "username" text not null,
   "hashedPwd" text not null,
-  "createdAt"  timestamptz(6) not null default now(),
+  "userEmail" text not null,
+  "OTP" text, 
+  "expiration" timestamptz(6), 
+  "createdAt"  timestamptz(6) not null default NOW(),
   primary key ("userId")
 );
 

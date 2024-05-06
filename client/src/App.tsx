@@ -13,6 +13,9 @@ import { useEffect, useState } from 'react';
 import SearchList from './pages/SearchList';
 import Ideas from './pages/Ideas';
 import { EmailSentForm } from './pages/EmailSentForm';
+import PasswordAssistance from './pages/PasswordAssistance';
+import OtpVerification from './pages/OtpVefication';
+import PasswordReset from './pages/PasswordReset';
 
 export default function App() {
   const [user, setUser] = useState<User>();
@@ -103,6 +106,9 @@ export default function App() {
           <Route path="addrecipe" element={<RecipeForm />}></Route>
           <Route path="sign-in" element={<SignInForm />}></Route>
           <Route path="sign-up" element={<SignUpForm />}></Route>
+          <Route
+            path="passwordassistance"
+            element={<PasswordAssistance />}></Route>
           <Route path="details" element={<Details />}></Route>
           <Route
             path="searchlist"
@@ -113,7 +119,9 @@ export default function App() {
                 setError={setError}
               />
             }></Route>
-          <Route path="/email-sent-form" element={<EmailSentForm />}></Route>
+          <Route path="email-sent-form" element={<EmailSentForm />}></Route>
+          <Route path="otp-verification" element={<OtpVerification />}></Route>
+          <Route path="password-reset" element={<PasswordReset />}></Route>
         </Route>
       </Routes>
     </UserProvider>

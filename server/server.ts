@@ -17,6 +17,8 @@ import { uploadsMiddleware } from './lib/uploads-middleware.js';
 import { idText } from 'typescript';
 import { error } from 'node:console';
 import { title } from 'node:process';
+import { generateOTP } from './lib/otp-generation';
+import { compareDate } from './lib/utility';
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -61,22 +63,18 @@ function validateUser(username: string, password: string): void {
 }
 
 app.post('/api/auth/sign-up', async (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
   try {
     validateUser(username, password);
-    const sql = `insert into "users" ("username", "hashedPwd") 
-                values ($1, $2) 
+    if (!email) throw new ClientError(404, 'userEmail required.');
+    const sql = `insert into "users" ("username", "hashedPwd", "userEmail") 
+                values ($1, $2, $3) 
                 returning *; `;
     const hashedPwd = await argon2.hash(password);
-    const results = await db.query(sql, [username, hashedPwd]);
+    const results = await db.query(sql, [username, hashedPwd, email]);
     const [row] = results.rows;
-    res.status(201).json(row);
+    res.status(201).json(true);
   } catch (error) {
-    const subString = `Key (username)=(${username}) already exists`;
-    if (JSON.stringify(error).includes(subString)) {
-      res.json('duplicate username');
-      return;
-    }
     console.error(error);
     next(error);
   }
@@ -384,6 +382,144 @@ app.post('/api/sendemail', async (req, res, next) => {
     );
     const dataSent = await sesClient.send(sendEmailCommand);
     res.status(200).json('sent');
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.get('/api/users/validEmail/:email', async (req, res, next) => {
+  try {
+    const { email } = req.params;
+    if (!email) throw new ClientError(400, 'email is required');
+    const sql = `select * from "users" where "userEmail"=$1;`;
+    const data = await db.query(sql, [email]);
+    const [row] = data.rows;
+    if (!row) {
+      res.status(200).json(true);
+    } else {
+      res.status(200).json(false);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.get('/api/users/OTPEmail/:email', async (req, res, next) => {
+  try {
+    const { email } = req.params;
+    if (!email) throw new ClientError(400, 'email is required');
+    const sql = `select * from "users" where "userEmail"=$1;`;
+    const data = await db.query(sql, [email]);
+    const [selectRow] = data.rows;
+    if (!selectRow) throw new ClientError(404, 'Email not exist.');
+
+    const OTP = generateOTP();
+    const hashedOTP = await argon2.hash(OTP);
+    const timeStamp = new Date();
+    const expiration = new Date(timeStamp.getTime() + 600000);
+    const updateSql = `update "users" 
+      set "OTP"=$1, "expiration"=$2 
+      where "userEmail"=$3 
+      returning *; `;
+    const result = await db.query(updateSql, [hashedOTP, expiration, email]);
+    const [updateRow] = result.rows;
+
+    const createSendEmailCommand = (toAddress: string, OTP: string): any => {
+      return new SendEmailCommand({
+        Destination: {
+          CcAddresses: [],
+          ToAddresses: [email],
+        },
+        Message: {
+          Body: {
+            Html: {
+              Charset: 'UTF-8',
+              Data: `<div>Here is your OTP: </div><div>${OTP}</div>`,
+            },
+            Text: {
+              Charset: 'UTF-8',
+              Data: '',
+            },
+          },
+          Subject: {
+            Charset: 'UTF-8',
+            Data: `OTP`,
+          },
+        },
+        Source: `willzhang73@gmail.com`,
+        ReplyToAddresses: [],
+      });
+    };
+    const sendEmailCommand = createSendEmailCommand(email, OTP);
+    const dataSent = await sesClient.send(sendEmailCommand);
+    res.status(200).json(true);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.get('/api/users/OTPVerify/:OTP/:email', async (req, res, next) => {
+  try {
+    const { OTP, email } = req.params;
+    const selectSql = `select * from "users" where "userEmail" = $1 ;`;
+    const result = await db.query(selectSql, [email]);
+    const [row] = result.rows;
+    if (!row) throw new ClientError(404, 'Email not found.');
+    const otpVerify = await argon2.verify(row.OTP, OTP);
+    const expiration = row.expiration;
+    const now = new Date();
+    const isExpired = compareDate(expiration, now);
+    if (!isExpired) {
+      res.status(200).json('expired');
+      return;
+    }
+    if (otpVerify) {
+      res.status(200).json(true);
+    } else {
+      res.status(200).json(false);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.get('/api/users/:username', async (req, res, next) => {
+  console.log('function checking username exist called');
+  try {
+    const { username } = req.params;
+    if (!username) throw new ClientError(400, 'username required');
+    const sql = `select * from "users" where "username"=$1;`;
+    const result = await db.query(sql, [username]);
+    const rows = result.rows;
+    if (rows.length === 0) {
+      res.status(200).json('true');
+    } else {
+      res.status(200).json(false);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.put('/api/users/password-reset', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email) throw new ClientError(400, 'email is required.');
+    if (!password) throw new ClientError(400, 'password is required.');
+    const hashedPwd = await argon2.hash(password);
+    const updateSql = `update "users" 
+    set "hashedPwd"=$1 
+    where "userEmail"=$2 
+    returning *;`;
+    const result = await db.query(updateSql, [hashedPwd, email]);
+    const [row] = result.rows;
+    if (!row) throw new ClientError(404, 'email not exist');
+    res.status(200).json(true);
   } catch (error) {
     console.error(error);
     next(error);
