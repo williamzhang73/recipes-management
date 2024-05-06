@@ -18,6 +18,10 @@ A full stack TypeScript solo project.
 
 ---
 
+## Demo
+
+- Live AWS link: http://recipes-management-dev.us-west-1.elasticbeanstalk.com/
+
 ### Clone Newly created repo into `lfz-code`
 
 1. From your newly created repo on GitHub, click the green `<> Code` button, then copy **SSH** URL
