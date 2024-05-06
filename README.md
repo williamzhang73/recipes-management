@@ -62,51 +62,100 @@ If your project will _not_ be using a database, edit `package.json` to remove th
 #### Verify the client
 
 1. A React app has already been created for you.
-1. Take a minute to look over the code in `client/src/App.tsx` to get an idea of what it is doing.
-1. Go to the app in your browser. You should see the message from the server below the React logo, and in the browser console.
-   ![](md.assets/client-server.png)
-1. If you see the message from the server in your browser you are good to go, your client and server are communicating.
+
+Go to the browser, and enter http://localhost:8080, a react app should be running. If not, make sure your database set up correctly, and your development servers are running.
 
 #### Set up the database
 
-1. In your browser navigate to the site you used for your database design.
-1. Export your database as PostgreSQL, this should generate the SQL code for creating your database tables.
-   - Reach out to an instructor if you have any issues with this step
-1. Copy the generated SQL code and paste it into `database/schema.sql` below the preexisting sql code in the file. The end result should look something like: _(You will likely have more tables)_
+1. Copy the pre generated sql below, and paste into the schema.sql in database folder.
 
    ```SQL
    set client_min_messages to warning;
-
    -- DANGER: this is NOT how to do it in the real world.
    -- `drop schema` INSTANTLY ERASES EVERYTHING.
    drop schema "public" cascade;
 
    create schema "public";
 
-   create table "todos" (
-       "todoId"      serial PRIMARY KEY,
-       "task"        text           not null,
-       "isCompleted" boolean        not null,
-       "createdAt"   timestamptz(6) not null default now(),
-       "updatedAt"   timestamptz(6) not null default now()
+   CREATE TABLE "public"."likes" (
+   "likesId" serial,
+   "userId" integer not null,
+   "recipeId" integer not null,
+   "createdAt" timestamptz(6) not null default now(),
+   primary key ("likesId")
    );
+
+   CREATE TABLE "public"."likes" (
+   "likesId" serial,
+   "userId" integer not null,
+   "recipeId" integer not null,
+   "createdAt" timestamptz(6) not null default now(),
+   primary key ("likesId")
+   );
+
+   CREATE TABLE "public"."likes" (
+   "likesId" serial,
+   "userId" integer not null,
+   "recipeId" integer not null,
+   "createdAt" timestamptz(6) not null default now(),
+   primary key ("likesId")
+   );
+
+   CREATE TABLE "public"."likes" (
+   "likesId" serial,
+   "userId" integer not null,
+   "recipeId" integer not null,
+   "createdAt" timestamptz(6) not null default now(),
+   primary key ("likesId")
+   );
+
+   CREATE TABLE "public"."users" (
+   "userId" serial,
+   "username" text not null,
+   "hashedPwd" text not null,
+   "userEmail" text not null,
+   "OTP" text,
+   "expiration" timestamptz(6),
+   "createdAt" timestamptz(6) not null default NOW(),
+   primary key ("userId")
+   );
+
+   CREATE TABLE "public"."recipes" (
+   "recipeId" serial,
+   "userId" integer not null,
+   "title" text not null,
+   "imageUrl" text not null,
+   "preparationTime" integer not null,
+   "cuisine" text not null,
+   "glutenFree" boolean,
+   "vegetarian" boolean,
+   "ingredients" text not null,
+   "instructions" text not null,
+   "createdAt" timestamptz(6) not null default now(),
+   primary key ("recipeId")
+   );
+
+   CREATE TABLE "public"."comments" (
+   "commentId" serial,
+   "userId" integer not null,
+   "recipeId" integer not null,
+   "message" text not null,
+   "createdAt" timestamptz(6) not null default now(),
+   primary key ("commentId")
+   );
+
+   ALTER TABLE "likes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
+   ALTER TABLE "likes" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId");
+   ALTER TABLE "recipes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
+   ALTER TABLE "comments" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
+   ALTER TABLE "comments" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId");
+   ALTER TABLE "users" ADD CONSTRAINT unique_username UNIQUE ("username");
    ```
 
-1. In a separate terminal, run `npm run db:import` to create your tables
-1. Use `psql` to verify your tables were created successfully (see [LFZ Database Guide](https://lms.learningfuze.com/code-guides/Learning-Fuze/curriculum/database) for tips). Your database and tables should be listed; if not, stop here and reach out to an instructor for help
-1. At this point your database is setup and you are good to start using it. However there is no data in your database, which isn't necessarily a bad thing, but if you want some starting data in your database you need to add insert statements into the `database/data.sql` file. You can add whatever starting data you need/want. Here is an example:
-   ```SQL
-   insert into "todos" ("task", "isCompleted")
-   values
-       ('Learn to code', false),
-       ('Build projects', false),
-       ('Get a job', false);
-   ```
+1. In a separate terminal, run `cd name-of-app` and then `npm run db:import` to create your tables
+1. Use `psql` to verify your tables were created successfully (see [LFZ Database Guide](https://lms.learningfuze.com/code-guides/Learning-Fuze/curriculum/database) for tips).
+
 1. After any changes to `database/schema.sql` or `database/data.sql` re-run the `npm run db:import` command to update your database. Use `psql` to verify your changes were successfully applied.
-
-## Deployment
-
-Once your template is set up and functional, deploy it. This will get all the deployment issues ironed out early. During development, you should re-deploy frequently to make sure that your code works properly in your production environment. Deployment instructions can be found [HERE](https://github.com/Learning-Fuze/lfz-portfolios/tree/master/deploy-to-elastic-beanstalk)
 
 ---
 
