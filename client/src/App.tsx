@@ -86,7 +86,7 @@ export default function App() {
               />
             }></Route>
           <Route
-            path="myrecipes"
+            path="my-recipes"
             element={
               <MyRecipes
                 handleCommentPost={handleCommentPost}
@@ -103,15 +103,15 @@ export default function App() {
                 setError={setError}
               />
             }></Route>
-          <Route path="addrecipe" element={<RecipeForm />}></Route>
+          <Route path="add-recipe" element={<RecipeForm />}></Route>
           <Route path="sign-in" element={<SignInForm />}></Route>
           <Route path="sign-up" element={<SignUpForm />}></Route>
           <Route
-            path="passwordassistance"
+            path="password-assistance"
             element={<PasswordAssistance />}></Route>
           <Route path="details" element={<Details />}></Route>
           <Route
-            path="searchlist"
+            path="search-list"
             element={
               <SearchList
                 handleCommentPost={handleCommentPost}

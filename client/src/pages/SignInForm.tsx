@@ -11,6 +11,7 @@ function SignInForm() {
   const { handleSignIn } = useUser();
   const navigate = useNavigate();
   const [pwdInputType, setPwdInputType] = useState<string>('password');
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
@@ -30,6 +31,18 @@ function SignInForm() {
       return;
     }
     setPwdInputType('password');
+  }
+
+  async function handleGuestClick() {
+    try {
+      const response = await fetch('/api/users/guest', { method: 'POST' });
+      if (!response.ok) throw new Error('Response network not ok.');
+      const { user, token } = await response.json();
+      handleSignIn(user, token);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -72,9 +85,14 @@ function SignInForm() {
               <span className="text-blue-500">Sign up</span>
             </Link>
           </span>
-          <Link to="/passwordassistance">
+          <Link to="/password-assistance">
             <span className="text-xs text-blue-500">Forget your password?</span>
           </Link>
+          <span
+            className="block text-xs text-blue-500"
+            onClick={handleGuestClick}>
+            Sign in as Guest?
+          </span>
         </div>
       </form>
     </div>

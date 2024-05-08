@@ -24,7 +24,7 @@ function Header() {
       const response = await fetch('/api/searchRecipe', req);
       if (!response) throw new Error('Network response not ok.');
       const data = await response.json();
-      navigate('/searchlist', { state: data });
+      navigate('/search-list', { state: data });
     } catch (error) {
       console.error(error);
       throw new Error('query search failed.');

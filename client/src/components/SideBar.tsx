@@ -10,9 +10,9 @@ function SideBar({ sideBarList, handleSetList, listItem }: Props) {
 
   function handleClick(list: string) {
     list === 'Ideas' && navigate('/ideas');
-    list === 'My Recipes' && navigate('/myrecipes');
+    list === 'My Recipes' && navigate('/my-recipes');
     list === 'Favorites' && navigate('/favorites');
-    list === 'Add Recipe' && navigate('/addrecipe');
+    list === 'Add Recipe' && navigate('/add-recipe');
     handleSetList(list);
   }
 

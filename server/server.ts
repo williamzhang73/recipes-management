@@ -89,16 +89,49 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     const [row] = results.rows;
     if (!row) throw new ClientError(404, 'user not found.');
     const pwdVerify = await argon2.verify(row.hashedPwd, password);
-    if (pwdVerify) {
-      const user = {
-        userId: row.userId,
+    if (!pwdVerify) throw new ClientError(400, 'password verify failed');
+    const user = {
+      userId: row.userId,
+      username,
+    };
+    const token = jwt.sign(user, tokenSecret);
+    res.status(201).json({ user, token });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.post('/api/users/guest', async (req, res, next) => {
+  console.log('api/users/guest');
+  try {
+    const username = 'guest';
+    const password = '123456';
+    const userEmail = 'willzhang73@gamil.com';
+    const searchSql = `select * from "users" where "username"=$1;`;
+    const searchResult = await db.query(searchSql, [username]);
+    const [searchRow] = searchResult.rows;
+    let user = null;
+    let token = null;
+    if (!searchRow) {
+      const insertSql = `insert into "users"("username", "hashedPwd", "userEmail") 
+    values($1, $2, $3) 
+    returning *;`;
+      const result = await db.query(insertSql, [username, password, userEmail]);
+      const [insertRow] = result.rows;
+      user = {
+        userId: insertRow.userId,
         username,
       };
-      const token = jwt.sign(user, tokenSecret);
-      res.status(201).json({ user, token });
+      token = jwt.sign(user, tokenSecret);
     } else {
-      throw new ClientError(400, 'password verify failed');
+      user = {
+        userId: searchRow.userId,
+        username,
+      };
+      token = jwt.sign(user, tokenSecret);
     }
+    res.status(200).json({ user, token });
   } catch (error) {
     console.error(error);
     next(error);
@@ -488,7 +521,6 @@ app.get('/api/users/OTPVerify/:OTP/:email', async (req, res, next) => {
 });
 
 app.get('/api/users/:username', async (req, res, next) => {
-  console.log('function checking username exist called');
   try {
     const { username } = req.params;
     if (!username) throw new ClientError(400, 'username required');
