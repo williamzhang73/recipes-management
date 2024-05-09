@@ -459,8 +459,10 @@ app.get('/api/users/OTPEmail/:email', async (req, res, next) => {
     const sql = `select * from "users" where "userEmail"=$1;`;
     const data = await db.query(sql, [email]);
     const [selectRow] = data.rows;
-    if (!selectRow) throw new ClientError(404, 'Email not exist.');
-
+    if (!selectRow) {
+      res.status(200).json(false);
+      return;
+    }
     const OTP = generateOTP();
     const hashedOTP = await argon2.hash(OTP);
     const timeStamp = new Date();
@@ -502,6 +504,7 @@ app.get('/api/users/OTPEmail/:email', async (req, res, next) => {
     const dataSent = await sesClient.send(sendEmailCommand);
     res.status(200).json(true);
   } catch (error) {
+    console.log('throw an error');
     console.error(error);
     next(error);
   }
