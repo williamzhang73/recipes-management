@@ -138,19 +138,6 @@ app.post('/api/users/guest', async (req, res, next) => {
   }
 });
 
-app.delete('/api/users/guest', async (req, res, next) => {
-  try {
-    const deleteSql = `delete from "users" where "username"=$1 returning *;`;
-    const result = await db.query(deleteSql, ['guest']);
-    const [row] = result.rows;
-    if (!row) throw new ClientError(404, 'username guest is not found.');
-    res.json(true);
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
 app.post('/api/comments', authMiddleware, async (req, res, next) => {
   try {
     const userId = req.user?.userId;

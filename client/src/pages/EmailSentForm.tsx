@@ -36,16 +36,16 @@ export function EmailSentForm() {
         navigate('/ideas');
       }
     } catch (error) {
-      alert('email sent failed');
+      alert('error sending email');
       console.error(error);
     }
   }
 
   return (
-    <div className="mx-6 w-full flex justify-center md:mx-0 md:border-l-2 md:border-white md:w-4/5">
+    <div className="w-full flex justify-center md:border-l-2 md:border-white md:w-4/5">
       <form
         onSubmit={handleSubmit}
-        className="p-3 w-full flex flex-col gap-y-3  bg-white h-fit mt-9 justify-center md:px-8 md:w-4/5">
+        className="px-3 w-full flex flex-col gap-y-3  bg-white h-72 mt-9 justify-center md:px-8 md:w-4/5">
         <span className="block text-center text-lg">Email Sent Form</span>
         <label className="flex justify-between">
           <span>From</span>
@@ -68,14 +68,11 @@ export function EmailSentForm() {
               placeholder="recipient"
               required></input>
           </label>
-          <span className="block text-red-500">
-            *Sandbox mode, only AWS verified email can be sent
-          </span>
         </div>
         {!isValidEmail && (
           <div className="flex justify-between">
             <span></span>
-            <span className="text-red-400">invalid email</span>
+            <span className="text-red-400">not valid email.</span>
           </div>
         )}
 
