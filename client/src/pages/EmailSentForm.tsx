@@ -36,7 +36,7 @@ export function EmailSentForm() {
         navigate('/ideas');
       }
     } catch (error) {
-      alert('error sending email');
+      alert(' email sent failed');
       console.error(error);
     }
   }
@@ -68,11 +68,12 @@ export function EmailSentForm() {
               placeholder="recipient"
               required></input>
           </label>
+          <span>*Sandbox mode, only AWS verified email will be sent.</span>
         </div>
         {!isValidEmail && (
           <div className="flex justify-between">
             <span></span>
-            <span className="text-red-400">not valid email.</span>
+            <span className="text-red-400">invalid email.</span>
           </div>
         )}
 
