@@ -1,171 +1,40 @@
 # full-stack-project
 
-A full stack TypeScript solo project.
-
-## Getting Started
-
----
-
-### Use this template to create a new repo on your GitHub account
-
-1. Click the green `Use this template` button, select `Create a new repository`
-   1. Under `Owner` select your username
-   1. Give your repository a name. Name it after your application. The name `full-stack-project` is _not_ a good name.
-   1. (Optional) Add a description
-   1. Leave repository as `Public`
-   1. **DO NOT** Include all branches
-   1. Click the green `Create repository from template` button
-
----
+This is a full-stack dynamic web application developed with PERN stack(PostgreSQL, Express.js, React, Node.js) and TypeScript. This application is built for home cooks and food enthusiasts who want to organize and share recipes.
 
 ## Demo
 
 - Live AWS link: http://recipes-management-dev.us-west-1.elasticbeanstalk.com/
 
-### Clone Newly created repo into `lfz-code`
+### Clone
 
-1. From your newly created repo on GitHub, click the green `<> Code` button, then copy **SSH** URL
-1. Open `lfz-code`, click on blue `><` button in bottom left of `lfz-code`
-   1. Select `Clone Repository in Container Volume...`
-   1. Paste **SSH** URL for your repo, click `Clone git repository from URL`
+1. In the main page of repo, click the Code button, and then click the SSH tab, then copy the SSH URL
+1. In the VS Code Studio, open the terminal, and run `git clone <SSH URL>`
 
----
+### Dependencies setup
 
-### Run and test project setup
-
-#### Getting Started
-
+1. Switch to the root directory `cd <your-folder-name>`.
 1. Install all dependencies with `npm install`.
 
-#### Create the database
+#### Database setup
 
-If your project will be using a database, create it now.
-
-1. Start PostgreSQL
-   ```sh
-   sudo service postgresql start
-   ```
-1. Create database (replace `name-of-database` with a name of your choosing, such as the name of your app)
-   ```sh
-   createdb name-of-database
-   ```
-1. In the `server/.env` file, in the `DATABASE_URL` value, replace `changeMe` with the name of your database, from the last step
+1. Start the PostgreSQL database `sudo service postgresql start`.
+1. Check the PostgreSQL database status `sudo service postgresql status`.
+1. Create a database `createdb <name-of-database>`
+1. In the `server/.env` file, in the `DATABASE_URL` value, replace database name with the name of your database, from the last step
 1. While you are editing `server/.env`, also change the value of `TOKEN_SECRET` to a custom value, without spaces.
-1. Make the same changes to `server/.env.example`.
-
-If your project will _not_ be using a database, edit `package.json` to remove the `dev:db` script.
+1. Run command `npm run db:import` to create all tables and import all existing data.
 
 #### Start the development servers
 
-1. Start all the development servers with the `"dev"` script:
-   ```sh
-   npm run dev
-   ```
-1. Later, when you wish to stop the development servers, type `Ctrl-C` in the terminal where the servers are running.
+1. Run `npm run dev` to start all servers including Vite and Express servers.
+1. If you want stop servers, type `Ctrl-c` in the running server terminal.
 
 #### Verify the client
 
-1. A React app has already been created for you.
-
-Go to the browser, and enter http://localhost:8080, a react app should be running. If not, make sure your database set up correctly, and your development servers are running.
-
-#### Set up the database
-
-1. Copy the pre generated sql below, and paste into the schema.sql in database folder.
-
-   ```SQL
-   set client_min_messages to warning;
-   -- DANGER: this is NOT how to do it in the real world.
-   -- `drop schema` INSTANTLY ERASES EVERYTHING.
-   drop schema "public" cascade;
-
-   create schema "public";
-
-   CREATE TABLE "public"."likes" (
-   "likesId" serial,
-   "userId" integer not null,
-   "recipeId" integer not null,
-   "createdAt" timestamptz(6) not null default now(),
-   primary key ("likesId")
-   );
-
-   CREATE TABLE "public"."likes" (
-   "likesId" serial,
-   "userId" integer not null,
-   "recipeId" integer not null,
-   "createdAt" timestamptz(6) not null default now(),
-   primary key ("likesId")
-   );
-
-   CREATE TABLE "public"."likes" (
-   "likesId" serial,
-   "userId" integer not null,
-   "recipeId" integer not null,
-   "createdAt" timestamptz(6) not null default now(),
-   primary key ("likesId")
-   );
-
-   CREATE TABLE "public"."likes" (
-   "likesId" serial,
-   "userId" integer not null,
-   "recipeId" integer not null,
-   "createdAt" timestamptz(6) not null default now(),
-   primary key ("likesId")
-   );
-
-   CREATE TABLE "public"."users" (
-   "userId" serial,
-   "username" text not null,
-   "hashedPwd" text not null,
-   "userEmail" text not null,
-   "OTP" text,
-   "expiration" timestamptz(6),
-   "createdAt" timestamptz(6) not null default NOW(),
-   primary key ("userId")
-   );
-
-   CREATE TABLE "public"."recipes" (
-   "recipeId" serial,
-   "userId" integer not null,
-   "title" text not null,
-   "imageUrl" text not null,
-   "preparationTime" integer not null,
-   "cuisine" text not null,
-   "glutenFree" boolean,
-   "vegetarian" boolean,
-   "ingredients" text not null,
-   "instructions" text not null,
-   "createdAt" timestamptz(6) not null default now(),
-   primary key ("recipeId")
-   );
-
-   CREATE TABLE "public"."comments" (
-   "commentId" serial,
-   "userId" integer not null,
-   "recipeId" integer not null,
-   "message" text not null,
-   "createdAt" timestamptz(6) not null default now(),
-   primary key ("commentId")
-   );
-
-   ALTER TABLE "likes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
-   ALTER TABLE "likes" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId");
-   ALTER TABLE "recipes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
-   ALTER TABLE "comments" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
-   ALTER TABLE "comments" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId");
-   ALTER TABLE "users" ADD CONSTRAINT unique_username UNIQUE ("username");
-   ```
-
-1. In a separate terminal, run `cd name-of-app` and then `npm run db:import` to create your tables
-1. Use `psql` to verify your tables were created successfully (see [LFZ Database Guide](https://lms.learningfuze.com/code-guides/Learning-Fuze/curriculum/database) for tips).
-
-1. After any changes to `database/schema.sql` or `database/data.sql` re-run the `npm run db:import` command to update your database. Use `psql` to verify your changes were successfully applied.
-
----
+1. Go to the browser, and enter http://localhost:8080, a react app should be running. If not, make sure your database set up correctly, and your development servers are running.
 
 ### Available `npm` commands explained
-
-Below is an explanation of all included `npm` commands in the root `package.json`. Several are only used for deployment purposes and should not be necessary for development.
 
 1. `start`
    - The `start` script starts the Node server in `production` mode, without any file watchers.
