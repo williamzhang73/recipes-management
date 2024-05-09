@@ -35,6 +35,22 @@ function Header() {
     setListItem(list);
   }
 
+  async function handleSignOutClick() {
+    try {
+      if (user?.username === 'guest') {
+        const response = await fetch('/api/users/guest', {
+          method: 'DELETE',
+        });
+        if (!response.ok) throw new Error('Response network is not ok.');
+      }
+
+      handleSignOut();
+      navigate('/sign-in');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <>
       <div className="px-5 border-b-2 border-white w-full flex flex-col justify-center items-center md:flex-row md:h-14 md:justify-between">
@@ -62,10 +78,7 @@ function Header() {
             <span>Welcome, {user.username}</span>
             <span
               className="text-xs text-gray-700"
-              onClick={() => {
-                handleSignOut();
-                navigate('/sign-in');
-              }}>
+              onClick={handleSignOutClick}>
               Sign out
             </span>
           </div>
