@@ -91,7 +91,7 @@ function SignInForm() {
           <span
             className="block text-xs text-blue-500"
             onClick={handleGuestClick}>
-            Continue as guest?
+            Sign in as Guest?
           </span>
         </div>
       </form>

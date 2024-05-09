@@ -48,14 +48,14 @@ CREATE TABLE "public"."comments" (
     primary key ("commentId")
 );
 
-ALTER TABLE "likes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId") ON DELETE CASCADE;
+ALTER TABLE "likes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
 
-ALTER TABLE "likes" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId") ON DELETE CASCADE;
+ALTER TABLE "likes" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId");
 
-ALTER TABLE "recipes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId") ON DELETE CASCADE;
+ALTER TABLE "recipes" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
 
-ALTER TABLE "comments" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId") ON DELETE CASCADE;
+ALTER TABLE "comments" ADD FOREIGN KEY ("userId") REFERENCES "users" ("userId");
 
-ALTER TABLE "comments" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId") ON DELETE CASCADE;
+ALTER TABLE "comments" ADD FOREIGN KEY ("recipeId") REFERENCES "recipes" ("recipeId");
 
 ALTER TABLE "users" ADD CONSTRAINT unique_username UNIQUE ("username");
