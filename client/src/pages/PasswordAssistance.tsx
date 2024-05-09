@@ -19,9 +19,11 @@ function PasswordAssistance() {
       const response = await fetch(`/api/users/OTPEmail/${email}`);
       if (!response.ok) throw new Error('Response network not ok.');
       const data = await response.json();
-      if (data) {
-        navigate('/otp-verification', { state: email });
+      if (!data) {
+        alert('Email not exist.');
+        return;
       }
+      navigate('/otp-verification', { state: email });
     } catch (error) {
       console.error(error);
     }
@@ -55,8 +57,11 @@ function PasswordAssistance() {
           </label>
           <button className="bg-blue-300 rounded ml-4">Continue</button>
         </div>
+        <div className="text-red-400 text-xs">
+          *Sandbox mode, only AWS verified email can be sent.
+        </div>
         {!isValidEmail && (
-          <div className="text-red-400">Invalid email format.</div>
+          <div className="text-red-400 text-sm">Invalid email format.</div>
         )}
       </form>
     </div>
